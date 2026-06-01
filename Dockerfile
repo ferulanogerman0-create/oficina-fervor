@@ -28,7 +28,7 @@ COPY --from=builder --chown=nextjs:nextjs /app/node_modules ./node_modules
 COPY --chown=nextjs:nextjs docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
 USER nextjs
-EXPOSE 3002
-ENV PORT=3002
+EXPOSE 3000
+ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 ENTRYPOINT ["dumb-init", "--", "./docker-entrypoint.sh"]
