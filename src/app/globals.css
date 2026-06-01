@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root { color-scheme: dark; }
+
+html, body {
+  background-color: theme('colors.fervor.ink');
+  color: theme('colors.fervor.ash');
+  font-family: theme('fontFamily.sans');
+}
+
+* { -webkit-tap-highlight-color: transparent; }
+
+/* ---- utilities FERVOR ---- */
+.card {
+  @apply bg-fervor-ink-2 border border-fervor-border rounded-xl p-5;
+}
+.card-hover { @apply hover:border-fervor-flame/40 transition-colors; }
+.btn-primary {
+  @apply bg-fervor-flame text-white font-semibold px-4 py-2 rounded-lg
+         hover:bg-fervor-flame-l transition-colors;
+}
+.btn-secondary {
+  @apply bg-fervor-ink-3 text-fervor-ash border border-fervor-border-soft
+         px-4 py-2 rounded-lg hover:bg-fervor-border-soft transition-colors;
+}
+.input-field {
+  @apply bg-fervor-ink-3 border border-fervor-border-soft rounded-lg px-3 py-2
+         text-fervor-ash focus:outline-none focus:border-fervor-flame transition-colors;
+}
+.kicker {
+  @apply font-mono text-[10px] uppercase tracking-[0.18em] text-fervor-flame;
+}
+.gradient-flame {
+  background: linear-gradient(135deg, #FF5A1F 0%, #C73C0A 100%);
+}
+
+/* grid técnico de fondo opcional */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
