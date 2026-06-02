@@ -35,6 +35,7 @@ Opción A — **Postgres portable embebido** (sin instalar nada, recomendado):
 
 ```bash
 npm install
+npm i -D embedded-postgres        # solo para devdb local (NO va en la imagen de prod)
 node scripts/devdb.mjs            # levanta postgres en :5432 (data en .pgdata), queda vivo
 # en otra terminal:
 npm run db:migrate
