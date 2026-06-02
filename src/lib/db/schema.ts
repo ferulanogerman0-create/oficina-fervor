@@ -27,6 +27,7 @@ export const clients = pgTable('clients', {
   slug: varchar('slug', { length: 64 }).notNull().unique(),
   nombre: varchar('nombre', { length: 128 }).notNull(),
   rubro: varchar('rubro', { length: 64 }),
+  esPropio: boolean('es_propio').default(false).notNull(), // true = cuenta propia FERVOR (oficina central)
   estado: varchar('estado', { length: 32 }).default('activo').notNull(), // activo/pausado/cerrado
   prioridad: varchar('prioridad', { length: 16 }).default('media').notNull(),
   color: varchar('color', { length: 16 }), // hex de marca

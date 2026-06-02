@@ -25,6 +25,8 @@ async function main() {
   } else console.log('· Usuario', username, 'ya existe');
 
   const seedClients = [
+    { slug: 'fervor', nombre: 'FERVOR', rubro: 'Agencia (cuenta propia)', color: '#FF5A1F',
+      igHandle: '@wolfdmagency', estado: 'activo', prioridad: 'alta', esPropio: true },
     { slug: 'fma', nombre: 'FMA Mecatrónica', rubro: 'Taller', color: '#00B4D8',
       igHandle: '@fma_mecatronica', whatsapp: '+5493489681980', estado: 'activo', prioridad: 'alta' },
     { slug: 'victoria', nombre: 'Victoria Carbone', rubro: 'Psicología', color: '#A08880',

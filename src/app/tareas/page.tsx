@@ -17,10 +17,20 @@ const PRIO_COLOR: Record<string, string> = {
   baja: 'border-fervor-border text-fervor-smoke/60',
 };
 
-export default async function TareasPage() {
-  const [tareas, clientes] = await Promise.all([listTareas(), listClientes()]);
+export default async function TareasPage({ searchParams }: { searchParams: Promise<{ client?: string }> }) {
+  const { client } = await searchParams;
+  const clientId = client ? Number(client) : undefined;
+  const [tareas, clientes] = await Promise.all([listTareas({ clientId }), listClientes()]);
   return (
     <PageShell kicker="Tu día" title="Tareas">
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
+        <a href="/tareas" className={`px-3 py-1.5 rounded-lg text-xs font-mono uppercase tracking-wider border ${!clientId ? 'border-fervor-flame text-fervor-flame' : 'border-fervor-border text-fervor-smoke hover:text-fervor-ash'}`}>Todos</a>
+        {clientes.map((c) => (
+          <a key={c.id} href={`/tareas?client=${c.id}`} className={`px-3 py-1.5 rounded-lg text-xs border flex items-center gap-1.5 ${clientId === c.id ? 'border-fervor-flame text-fervor-flame' : 'border-fervor-border text-fervor-smoke hover:text-fervor-ash'}`}>
+            {c.color && <span className="w-2 h-2 rounded-full" style={{ background: c.color }} />}{c.nombre}
+          </a>
+        ))}
+      </div>
       <form action={createTarea} className="card mb-6 grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
         <div className="md:col-span-5">
           <label className="block text-xs font-mono uppercase tracking-wider text-fervor-smoke mb-1.5">Tarea</label>

@@ -18,12 +18,22 @@ const FORMATO_BADGE: Record<string, string> = {
   reel: 'bg-alert/15 text-alert',
 };
 
-export default async function ContenidoPage() {
-  const [ideas, clientes] = await Promise.all([listIdeas(), listClientes()]);
+export default async function ContenidoPage({ searchParams }: { searchParams: Promise<{ client?: string }> }) {
+  const { client } = await searchParams;
+  const clientId = client ? Number(client) : undefined;
+  const [ideas, clientes] = await Promise.all([listIdeas({ clientId }), listClientes()]);
   return (
     <PageShell kicker="Content board" title="Contenido" actions={
       <a href="#nueva" className="btn-primary text-sm shadow-flame">+ Idea</a>
     }>
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
+        <a href="/contenido" className={`px-3 py-1.5 rounded-lg text-xs font-mono uppercase tracking-wider border ${!clientId ? 'border-fervor-flame text-fervor-flame' : 'border-fervor-border text-fervor-smoke hover:text-fervor-ash'}`}>Todos</a>
+        {clientes.map((c) => (
+          <a key={c.id} href={`/contenido?client=${c.id}`} className={`px-3 py-1.5 rounded-lg text-xs border flex items-center gap-1.5 ${clientId === c.id ? 'border-fervor-flame text-fervor-flame' : 'border-fervor-border text-fervor-smoke hover:text-fervor-ash'}`}>
+            {c.color && <span className="w-2 h-2 rounded-full" style={{ background: c.color }} />}{c.nombre}
+          </a>
+        ))}
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 mb-6">
         {ESTADOS.map((e) => {
           const items = ideas.filter((i) => i.estado === e);

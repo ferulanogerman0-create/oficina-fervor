@@ -2,6 +2,7 @@ node_modules
 .next
 dist
 out
+.pgdata
 .env
 .env.local
 .env.production
@@ -10,3 +11,4 @@ dev.log
 .DS_Store
 .idea
 .vscode
+tsconfig.tsbuildinfo

@@ -1,0 +1,1 @@
+ALTER TABLE "clients" ADD COLUMN "es_propio" boolean DEFAULT false NOT NULL;

@@ -10,12 +10,21 @@ export async function listClientes(query?: string) {
   const conds = query
     ? [or(ilike(schema.clients.nombre, `%${query}%`), ilike(schema.clients.slug, `%${query}%`))!]
     : [];
-  return await db.select().from(schema.clients).where(and(...conds)).orderBy(desc(schema.clients.createdAt));
+  // cuenta propia (FERVOR) primero, luego por fecha
+  return await db.select().from(schema.clients).where(and(...conds))
+    .orderBy(desc(schema.clients.esPropio), desc(schema.clients.createdAt));
 }
 
 export async function getCliente(id: number) {
   await ctx();
   const [row] = await db.select().from(schema.clients).where(eq(schema.clients.id, id)).limit(1);
+  return row ?? null;
+}
+
+/** Cuenta propia de FERVOR (oficina central). */
+export async function getSelfClient() {
+  await ctx();
+  const [row] = await db.select().from(schema.clients).where(eq(schema.clients.esPropio, true)).limit(1);
   return row ?? null;
 }
 
