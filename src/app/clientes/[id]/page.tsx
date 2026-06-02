@@ -12,7 +12,7 @@ import { MetricTrends, type SnapRow } from '@/components/metric-trends';
 import { ETAPAS_LEAD, ESTADOS_IDEA } from '@/lib/types';
 import {
   Settings, Instagram, Users, Eye, Heart, DollarSign, Target, Film, Play, Bookmark,
-  Megaphone, ListChecks, CalendarDays, BarChart3, Flame, ExternalLink,
+  Megaphone, ListChecks, CalendarDays, BarChart3, Flame, ExternalLink, Download,
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -65,9 +65,14 @@ export default async function ClienteDashboardPage({ params }: { params: Promise
 
   return (
     <PageShell kicker={c.esPropio ? 'Oficina central' : 'Cliente'} title={c.nombre} actions={
-      <Link href={`/clientes/${cid}/editar`} className="btn-secondary text-sm flex items-center gap-2">
-        <Settings className="h-4 w-4" /> Editar
-      </Link>
+      <div className="flex items-center gap-2">
+        <a href={`/api/export/${cid}?days=90`} className="btn-secondary text-sm flex items-center gap-2">
+          <Download className="h-4 w-4" /> CSV
+        </a>
+        <Link href={`/clientes/${cid}/editar`} className="btn-secondary text-sm flex items-center gap-2">
+          <Settings className="h-4 w-4" /> Editar
+        </Link>
+      </div>
     }>
       {/* identidad + tabs */}
       <div className="flex items-center gap-3 mb-5 flex-wrap">
