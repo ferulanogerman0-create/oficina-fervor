@@ -22,7 +22,14 @@ async function main() {
       role: 'owner',
     });
     console.log('✓ Usuario', username, 'creado');
-  } else console.log('· Usuario', username, 'ya existe');
+  } else {
+    // Resetear hash al SEED_PASS actual (idempotente) para no quedar trabado
+    // con la pass de un seed previo.
+    await db.update(schema.users)
+      .set({ passwordHash: await bcrypt.hash(password, 10), nombre })
+      .where(eq(schema.users.id, existsUser.id));
+    console.log('· Usuario', username, 'existía → password reseteada a SEED_PASS');
+  }
 
   const seedClients = [
     { slug: 'fervor', nombre: 'FERVOR', rubro: 'Agencia (cuenta propia)', color: '#FF5A1F',

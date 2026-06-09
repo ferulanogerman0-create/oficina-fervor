@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
 import { destroySession } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 
-export async function POST(req: Request) {
+export async function POST() {
   await destroySession();
-  return NextResponse.redirect(new URL('/login', req.url), 303);
+  // Location relativo (ver login route): evita el host interno del proxy.
+  return new Response(null, { status: 303, headers: { Location: '/login' } });
 }
