@@ -141,6 +141,89 @@ export const contentIdeas = pgTable('content_ideas', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 }, (t) => ({ idxClientEstado: index('idx_ideas_client_estado').on(t.clientId, t.estado) }));
 
+// ====== DMs (Instagram Direct + Messenger conversations) ======
+export const dmConversations = pgTable('dm_conversations', {
+  id: serial('id').primaryKey(),
+  clientId: integer('client_id').references(() => clients.id, { onDelete: 'cascade' }).notNull(),
+  platform: varchar('platform', { length: 16 }).notNull(), // instagram / messenger
+  metaConvId: varchar('meta_conv_id', { length: 128 }).unique(),
+  participantId: varchar('participant_id', { length: 128 }),
+  participantName: varchar('participant_name', { length: 256 }),
+  participantHandle: varchar('participant_handle', { length: 128 }),
+  lastMessageAt: timestamp('last_message_at', { withTimezone: true }),
+  lastMessagePreview: text('last_message_preview'),
+  unread: integer('unread').default(0).notNull(),
+  msgCount: integer('msg_count').default(0).notNull(),
+  // CRM tag: ¿este conversation generó interés / lead?
+  tagLead: boolean('tag_lead').default(false).notNull(),
+  leadId: integer('lead_id').references(() => leads.id, { onDelete: 'set null' }),
+  // source attribution si vino de un ad / post
+  sourceAdId: varchar('source_ad_id', { length: 64 }),
+  sourcePostId: varchar('source_post_id', { length: 64 }),
+  syncedAt: timestamp('synced_at', { withTimezone: true }).defaultNow(),
+}, (t) => ({
+  idxClientLast: index('idx_dms_client_last').on(t.clientId, t.lastMessageAt),
+  idxLead: index('idx_dms_lead').on(t.tagLead),
+}));
+
+export const dmMessages = pgTable('dm_messages', {
+  id: serial('id').primaryKey(),
+  conversationId: integer('conversation_id').references(() => dmConversations.id, { onDelete: 'cascade' }).notNull(),
+  metaMsgId: varchar('meta_msg_id', { length: 128 }).unique(),
+  fromMe: boolean('from_me').notNull(),
+  body: text('body'),
+  attachmentType: varchar('attachment_type', { length: 32 }), // image/video/audio/story_mention/ig_reel
+  attachmentUrl: text('attachment_url'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+}, (t) => ({
+  idxConv: index('idx_msgs_conv').on(t.conversationId, t.createdAt),
+}));
+
+// ====== AD-LEVEL data (ad set + ad insights) ======
+export const adAds = pgTable('ad_ads', {
+  id: serial('id').primaryKey(),
+  clientId: integer('client_id').references(() => clients.id, { onDelete: 'cascade' }).notNull(),
+  campaignMetaId: varchar('campaign_meta_id', { length: 64 }), // FK al ad_campaigns.metaId
+  adSetMetaId: varchar('adset_meta_id', { length: 64 }),
+  adMetaId: varchar('ad_meta_id', { length: 64 }).unique(),
+  name: varchar('name', { length: 256 }),
+  status: varchar('status', { length: 32 }),
+  effectiveStatus: varchar('effective_status', { length: 64 }),
+  creativeId: varchar('creative_id', { length: 64 }),
+  // insights snapshot
+  spend: numeric('spend', { precision: 12, scale: 2 }).default('0'),
+  impressions: integer('impressions').default(0),
+  reach: integer('reach').default(0),
+  clicks: integer('clicks').default(0),
+  ctr: numeric('ctr', { precision: 6, scale: 4 }),
+  cpc: numeric('cpc', { precision: 10, scale: 2 }),
+  cpm: numeric('cpm', { precision: 10, scale: 2 }),
+  frequency: numeric('frequency', { precision: 6, scale: 2 }),
+  conversations: integer('conversations').default(0), // onsite_conversion.messaging_conversation_started_7d
+  leadResults: integer('lead_results').default(0),
+  syncedAt: timestamp('synced_at', { withTimezone: true }).defaultNow(),
+}, (t) => ({
+  idxClientCampaign: index('idx_ads_client_camp').on(t.clientId, t.campaignMetaId),
+}));
+
+// ====== WEB ANALYTICS (pageviews wolfdma.website + landings) ======
+export const webVisits = pgTable('web_visits', {
+  id: serial('id').primaryKey(),
+  clientId: integer('client_id').references(() => clients.id, { onDelete: 'cascade' }).notNull(),
+  date: varchar('date', { length: 10 }).notNull(), // YYYY-MM-DD
+  path: varchar('path', { length: 256 }).notNull(), // /privacy, /, /caso-fma, etc
+  pageviews: integer('pageviews').default(0).notNull(),
+  uniqueVisitors: integer('unique_visitors').default(0).notNull(),
+  avgDurationSec: integer('avg_duration_sec'),
+  bounceRate: numeric('bounce_rate', { precision: 5, scale: 4 }),
+  // attribution
+  refSource: varchar('ref_source', { length: 64 }), // direct/google/instagram/ad
+  refMedium: varchar('ref_medium', { length: 64 }), // organic/cpc/referral/social
+  refCampaign: varchar('ref_campaign', { length: 128 }),
+}, (t) => ({
+  uxClientDatePath: uniqueIndex('ux_web_client_date_path').on(t.clientId, t.date, t.path, t.refSource),
+}));
+
 // ====== METRIC SNAPSHOTS (trends diarios) ======
 export const metricSnapshots = pgTable('metric_snapshots', {
   id: serial('id').primaryKey(),
@@ -154,6 +237,16 @@ export const metricSnapshots = pgTable('metric_snapshots', {
   adSpend: numeric('ad_spend', { precision: 12, scale: 2 }),
   adResults: integer('ad_results'),
   newLeads: integer('new_leads'),
+  // ads (campaña agregado)
+  totalAdSpend: numeric('total_ad_spend', { precision: 12, scale: 2 }),
+  totalAdImpressions: integer('total_ad_impressions'),
+  totalAdClicks: integer('total_ad_clicks'),
+  totalAdConversations: integer('total_ad_conversations'),
+  // dms
+  newDmsCount: integer('new_dms_count'),
+  newLeadsFromDm: integer('new_leads_from_dm'),
+  // web
+  totalWebPageviews: integer('total_web_pageviews'),
   raw: jsonb('raw'), // payload completo de Meta por las dudas
 }, (t) => ({
   uxClientDate: uniqueIndex('ux_snap_client_date').on(t.clientId, t.date),
