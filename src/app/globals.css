@@ -27,9 +27,9 @@ html, body {
   @apply bg-fervor-ink-3 text-fervor-ash border border-fervor-border-soft
          px-4 py-2 rounded-lg hover:bg-fervor-border-soft transition-colors;
 }
-.input-field {
+.input-field, .input {
   @apply bg-fervor-ink-3 border border-fervor-border-soft rounded-lg px-3 py-2
-         text-fervor-ash focus:outline-none focus:border-fervor-flame transition-colors;
+         text-fervor-ash focus:outline-none focus:border-fervor-flame transition-colors w-full;
 }
 .kicker {
   @apply font-mono text-[10px] uppercase tracking-[0.18em] text-fervor-flame;

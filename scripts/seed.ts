@@ -46,6 +46,140 @@ async function main() {
       console.log('✓ Cliente', c.slug, 'creado');
     } else console.log('· Cliente', c.slug, 'ya existe');
   }
+
+  // ===== OBJETIVOS estrategia 90d (2026-06-18 → 2026-09-16) =====
+  const hoy = new Date('2026-06-18');
+  const tresMeses = new Date('2026-09-16');
+  const fmt = (d: Date) => d.toISOString().slice(0, 10);
+
+  const seedObjetivos = [
+    { titulo: 'MRR FERVOR +$1.500 USD/mes', tipo: '90d', categoria: 'ingresos',
+      fechaInicio: fmt(hoy), fechaFin: fmt(tresMeses),
+      kpiUnidad: 'USD', kpiTarget: '1500', color: '#FF5A1F',
+      descripcion: '3-4 clientes nuevos recurrentes a $300-1000 USD/mes promedio.' },
+    { titulo: 'Cerrar 3 clientes recurrentes nuevos', tipo: '90d', categoria: 'captacion',
+      fechaInicio: fmt(hoy), fechaFin: fmt(tresMeses),
+      kpiUnidad: 'clientes', kpiTarget: '3', color: '#FFA53C',
+      descripcion: 'Pipeline LinkedIn outreach + IG inbound.' },
+    { titulo: '90 conexiones LinkedIn calificadas', tipo: '90d', categoria: 'captacion',
+      fechaInicio: fmt(hoy), fechaFin: fmt(tresMeses),
+      kpiUnidad: 'conexiones', kpiTarget: '90', color: '#FF7A3C',
+      descripcion: '10-15 connection requests/día manual, target agencias chicas LATAM.' },
+    { titulo: '24 posts LinkedIn publicados', tipo: '90d', categoria: 'contenido',
+      fechaInicio: fmt(hoy), fechaFin: fmt(tresMeses),
+      kpiUnidad: 'posts', kpiTarget: '24', color: '#E0240A',
+      descripcion: '2 posts/semana: casos + lecciones + decisiones contrarias.' },
+    { titulo: '90 posts IG feed publicados', tipo: '90d', categoria: 'contenido',
+      fechaInicio: fmt(hoy), fechaFin: fmt(tresMeses),
+      kpiUnidad: 'posts', kpiTarget: '90', color: '#FF5A1F',
+      descripcion: '1 post diario IG. Mix carruseles + reels + posts caso.' },
+    { titulo: '9 discovery calls realizadas', tipo: '90d', categoria: 'captacion',
+      fechaInicio: fmt(hoy), fechaFin: fmt(tresMeses),
+      kpiUnidad: 'calls', kpiTarget: '9', color: '#FFA53C',
+      descripcion: '3 calls/mes. SPIN simplificado.' },
+  ];
+  const objetivoIds: Record<string, number> = {};
+  for (const o of seedObjetivos) {
+    const [exists] = await db.select().from(schema.objetivos).where(eq(schema.objetivos.titulo, o.titulo)).limit(1);
+    if (!exists) {
+      const [created] = await db.insert(schema.objetivos).values(o as typeof schema.objetivos.$inferInsert).returning();
+      objetivoIds[o.titulo] = created.id;
+      console.log('✓ Objetivo', o.titulo);
+    } else {
+      objetivoIds[o.titulo] = exists.id;
+      console.log('· Objetivo', o.titulo, 'ya existe');
+    }
+  }
+
+  // ===== HABITOS DIARIOS (Lun-Vie) =====
+  const seedHabitos = [
+    // ----- DIARIO -----
+    { titulo: '10 connection requests LinkedIn', categoria: 'captacion',
+      frecuencia: 'diaria', diasSemana: '1,2,3,4,5', horaDefault: '09:00',
+      tiempoEstimadoMin: 20, emoji: '🔗',
+      descripcion: 'Manual. SIN mensaje en la request. Target: founders agencias chicas LATAM.',
+      objetivoTitulo: '90 conexiones LinkedIn calificadas' },
+    { titulo: 'Responder DMs IG + LinkedIn', categoria: 'captacion',
+      frecuencia: 'diaria', diasSemana: '1,2,3,4,5', horaDefault: '09:30',
+      tiempoEstimadoMin: 30, emoji: '💬',
+      descripcion: 'Inbox 0 antes de seguir. Responder personalmente, sin templates rígidos.',
+      objetivoTitulo: 'Cerrar 3 clientes recurrentes nuevos' },
+    { titulo: '1 post IG feed publicado', categoria: 'contenido',
+      frecuencia: 'diaria', diasSemana: '1,2,3,4,5,6', horaDefault: '10:00',
+      tiempoEstimadoMin: 30, emoji: '📸',
+      descripcion: 'Carrusel, reel o post single. Brand FERVOR. Caso o lección con número.',
+      objetivoTitulo: '90 posts IG feed publicados' },
+    { titulo: '3-5 stories IG', categoria: 'contenido',
+      frecuencia: 'diaria', diasSemana: '1,2,3,4,5,6', horaDefault: '11:00',
+      tiempoEstimadoMin: 15, emoji: '📲',
+      descripcion: 'Behind-the-scenes, work-in-progress, snippets de cliente, polls.' },
+    { titulo: 'Check métricas oficina', categoria: 'admin',
+      frecuencia: 'diaria', diasSemana: '1,2,3,4,5', horaDefault: '14:00',
+      tiempoEstimadoMin: 10, emoji: '📊',
+      descripcion: 'Ads spend, leads nuevos, web visits, DMs pendientes.' },
+    { titulo: 'Delivery cliente activo', categoria: 'delivery',
+      frecuencia: 'diaria', diasSemana: '1,2,3,4,5', horaDefault: '14:30',
+      tiempoEstimadoMin: 180, emoji: '⚙️',
+      descripcion: 'Bloque profundo: dev, debugging, calls cliente.' },
+    { titulo: 'Review pipeline tomorrow', categoria: 'admin',
+      frecuencia: 'diaria', diasSemana: '1,2,3,4,5', horaDefault: '18:00',
+      tiempoEstimadoMin: 10, emoji: '🎯',
+      descripcion: 'Qué hay mañana: calls, deadlines, posts a publicar.' },
+
+    // ----- SEMANALES -----
+    { titulo: 'Planning semana + revisión KPIs', categoria: 'admin',
+      frecuencia: 'semanal', diasSemana: '1', horaDefault: '08:30',
+      tiempoEstimadoMin: 30, emoji: '🗓️',
+      descripcion: 'Lunes. Revisión KPIs semana anterior + qué armar esta semana.' },
+    { titulo: 'Programar 2 posts LinkedIn semana', categoria: 'contenido',
+      frecuencia: 'semanal', diasSemana: '1', horaDefault: '15:00',
+      tiempoEstimadoMin: 60, emoji: '💼',
+      descripcion: 'Lunes. Redactar + programar 2 posts. Casos técnicos + lecciones.',
+      objetivoTitulo: '24 posts LinkedIn publicados' },
+    { titulo: 'Revisión pipeline ventas', categoria: 'captacion',
+      frecuencia: 'semanal', diasSemana: '3', horaDefault: '11:00',
+      tiempoEstimadoMin: 30, emoji: '📋',
+      descripcion: 'Miércoles. Mover prospects en CRM. Follow-ups pendientes.' },
+    { titulo: 'Cierre semana + reporte personal', categoria: 'admin',
+      frecuencia: 'semanal', diasSemana: '5', horaDefault: '17:00',
+      tiempoEstimadoMin: 30, emoji: '🏁',
+      descripcion: 'Viernes. KPIs: connection requests, calls, propuestas, MRR.' },
+    { titulo: 'Crear contenido nuevo (caso/lección)', categoria: 'contenido',
+      frecuencia: 'semanal', diasSemana: '6', horaDefault: '10:00',
+      tiempoEstimadoMin: 120, emoji: '✍️',
+      descripcion: 'Sábado. Producción profunda: bloque para próxima semana.' },
+
+    // ----- MENSUALES -----
+    { titulo: 'Review mes + planning mes siguiente', categoria: 'admin',
+      frecuencia: 'mensual', diaMes: 1, horaDefault: '08:30',
+      tiempoEstimadoMin: 90, emoji: '📅',
+      descripcion: 'Día 1. KPIs mes anterior, ajustes estrategia, foco mes nuevo.' },
+    { titulo: 'Mid-month adjust', categoria: 'admin',
+      frecuencia: 'mensual', diaMes: 15, horaDefault: '09:00',
+      tiempoEstimadoMin: 30, emoji: '⚖️',
+      descripcion: 'Día 15. Tracking estoy on/off pace para KPIs del mes?' },
+    { titulo: 'Reportings clientes + cobranza check', categoria: 'delivery',
+      frecuencia: 'mensual', diaMes: 28, horaDefault: '15:00',
+      tiempoEstimadoMin: 90, emoji: '💰',
+      descripcion: 'Fin de mes. Generar PDF reportings + verificar pagos recurrentes.' },
+  ];
+
+  for (const h of seedHabitos) {
+    const [exists] = await db.select().from(schema.habitos).where(eq(schema.habitos.titulo, h.titulo)).limit(1);
+    if (!exists) {
+      const objId = (h as any).objetivoTitulo ? objetivoIds[(h as any).objetivoTitulo] : undefined;
+      const { objetivoTitulo, ...rest } = h as any;
+      await db.insert(schema.habitos).values({
+        ...rest,
+        objetivoId: objId ?? null,
+        color: '#FF5A1F',
+      } as typeof schema.habitos.$inferInsert);
+      console.log('✓ Hábito', h.titulo);
+    } else {
+      console.log('· Hábito', h.titulo, 'ya existe');
+    }
+  }
+
   await client.end();
   console.log('Seed listo.');
 }

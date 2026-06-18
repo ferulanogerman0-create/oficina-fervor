@@ -2,15 +2,18 @@ import Link from 'next/link';
 import {
   LayoutDashboard, Users, Megaphone, Film, Target,
   ListChecks, CalendarDays, BarChart3, Flame, Settings,
+  Zap, Trophy,
 } from 'lucide-react';
 
 const NAV = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/habitos', label: 'Hábitos', icon: Zap },
+  { href: '/objetivos', label: 'Objetivos', icon: Trophy },
+  { href: '/tareas', label: 'Tareas', icon: ListChecks },
   { href: '/clientes', label: 'Clientes', icon: Users },
   { href: '/ads', label: 'Meta Ads', icon: Megaphone },
   { href: '/videos', label: 'Video Analytics', icon: Film },
   { href: '/crm', label: 'CRM', icon: Target },
-  { href: '/tareas', label: 'Tareas', icon: ListChecks },
   { href: '/contenido', label: 'Contenido', icon: CalendarDays },
   { href: '/metricas', label: 'Métricas', icon: BarChart3 },
   { href: '/config', label: 'Config', icon: Settings },

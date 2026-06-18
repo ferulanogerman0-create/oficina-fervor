@@ -2,7 +2,8 @@ import { Sidebar } from '@/components/sidebar';
 import { TrendChart } from '@/components/trend-chart';
 import { dashboardKpis, dashboardTrend, dashboardClientes, dashboardTareas } from '@/lib/actions/dashboard';
 import { syncAllClientes } from '@/lib/actions/meta-accounts';
-import { Flame, Eye, Heart, Users, DollarSign, Target, ArrowUpRight, RefreshCw } from 'lucide-react';
+import { getDashboardStats, getObjetivosActivos } from '@/lib/actions/habits';
+import { Flame, Eye, Heart, Users, DollarSign, Target, ArrowUpRight, RefreshCw, Zap, Trophy } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -15,8 +16,9 @@ const compact = (v: unknown) => {
 const money = (v: unknown) => '$' + (Number(v) || 0).toLocaleString('es-AR', { maximumFractionDigits: 0 });
 
 export default async function Home() {
-  const [k, trend, clientes, tareas] = await Promise.all([
+  const [k, trend, clientes, tareas, stats, objetivos] = await Promise.all([
     dashboardKpis(), dashboardTrend(), dashboardClientes(), dashboardTareas(),
+    getDashboardStats(), getObjetivosActivos(),
   ]);
 
   const kpis = [
@@ -45,6 +47,53 @@ export default async function Home() {
         </header>
 
         <div className="p-8 space-y-8">
+          {/* Hábitos + Objetivos */}
+          <section className="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <Link href="/habitos" className="card card-hover">
+              <div className="flex items-start justify-between mb-3">
+                <div className="kicker">Hábitos hoy</div>
+                <Zap className="h-4 w-4 text-fervor-flame" />
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="font-display text-3xl font-bold text-fervor-paper">{stats.habitosHoy.pct}%</span>
+                <span className="text-xs text-fervor-smoke">{stats.habitosHoy.completados}/{stats.habitosHoy.total}</span>
+              </div>
+              <div className="h-1.5 bg-fervor-ink-3 rounded-full mt-2 overflow-hidden">
+                <div className="h-full bg-fervor-flame" style={{ width: `${stats.habitosHoy.pct}%` }} />
+              </div>
+            </Link>
+            <Link href="/objetivos" className="card card-hover">
+              <div className="flex items-start justify-between mb-3">
+                <div className="kicker">Objetivos activos</div>
+                <Trophy className="h-4 w-4 text-fervor-flame" />
+              </div>
+              <div className="font-display text-3xl font-bold text-fervor-paper">{stats.objetivosActivos}</div>
+              <div className="text-xs text-fervor-smoke mt-1">en estrategia 90d</div>
+            </Link>
+            <Link href="/tareas" className="card card-hover">
+              <div className="flex items-start justify-between mb-3">
+                <div className="kicker">Tareas pendientes</div>
+                <Target className="h-4 w-4 text-fervor-flame" />
+              </div>
+              <div className="font-display text-3xl font-bold text-fervor-paper">{stats.tareasPendientes}</div>
+              <div className="text-xs text-fervor-smoke mt-1">por completar</div>
+            </Link>
+            <div className="card border-fervor-flame/30 bg-fervor-flame/5">
+              <div className="kicker mb-1">Top objetivo</div>
+              {objetivos[0] ? (
+                <>
+                  <div className="font-display text-sm font-bold text-fervor-paper mb-2 line-clamp-2">{objetivos[0].titulo}</div>
+                  <div className="flex items-baseline justify-between text-xs text-fervor-smoke">
+                    <span>{Number(objetivos[0].kpiActual || 0).toLocaleString('es-AR')} / {Number(objetivos[0].kpiTarget || 0).toLocaleString('es-AR')}</span>
+                    <span className="text-fervor-flame font-mono">{Math.round((Number(objetivos[0].kpiActual || 0) / Number(objetivos[0].kpiTarget || 1)) * 100)}%</span>
+                  </div>
+                </>
+              ) : (
+                <div className="text-fervor-smoke text-xs">Sin objetivos.</div>
+              )}
+            </div>
+          </section>
+
           {/* KPIs */}
           <section className="grid grid-cols-2 md:grid-cols-5 gap-3">
             {kpis.map((x) => (

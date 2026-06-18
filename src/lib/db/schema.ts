@@ -224,6 +224,79 @@ export const webVisits = pgTable('web_visits', {
   uxClientDatePath: uniqueIndex('ux_web_client_date_path').on(t.clientId, t.date, t.path, t.refSource),
 }));
 
+// ====== OBJETIVOS (90d / mensual / semanal) ======
+export const objetivos = pgTable('objetivos', {
+  id: serial('id').primaryKey(),
+  titulo: varchar('titulo', { length: 256 }).notNull(),
+  descripcion: text('descripcion'),
+  tipo: varchar('tipo', { length: 32 }).notNull(), // 90d / mensual / semanal / anual
+  categoria: varchar('categoria', { length: 64 }), // captacion / contenido / delivery / ingresos / admin
+  fechaInicio: varchar('fecha_inicio', { length: 10 }).notNull(), // YYYY-MM-DD
+  fechaFin: varchar('fecha_fin', { length: 10 }).notNull(),
+  kpiUnidad: varchar('kpi_unidad', { length: 32 }), // USD / clientes / conexiones / posts / calls
+  kpiTarget: numeric('kpi_target', { precision: 14, scale: 2 }),
+  kpiActual: numeric('kpi_actual', { precision: 14, scale: 2 }).default('0'),
+  estado: varchar('estado', { length: 32 }).default('activo').notNull(), // activo / cumplido / fallido / pausado
+  color: varchar('color', { length: 16 }).default('#FF5A1F'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+}, (t) => ({
+  idxEstado: index('idx_objetivos_estado').on(t.estado),
+  idxTipo: index('idx_objetivos_tipo').on(t.tipo),
+}));
+
+// ====== HABITOS (recurrentes diarios/semanales/mensuales) ======
+export const habitos = pgTable('habitos', {
+  id: serial('id').primaryKey(),
+  titulo: varchar('titulo', { length: 256 }).notNull(),
+  descripcion: text('descripcion'),
+  categoria: varchar('categoria', { length: 32 }).notNull(), // captacion / contenido / delivery / admin / personal
+  frecuencia: varchar('frecuencia', { length: 16 }).notNull(), // diaria / semanal / mensual
+  diasSemana: varchar('dias_semana', { length: 16 }), // "1,2,3,4,5" Lun-Vie (frecuencia diaria) o "1" (semanal Lun)
+  diaMes: integer('dia_mes'), // 1-31 o -1 = ultimo día (frecuencia mensual)
+  horaDefault: varchar('hora_default', { length: 5 }), // HH:MM
+  tiempoEstimadoMin: integer('tiempo_estimado_min').default(30),
+  objetivoId: integer('objetivo_id').references(() => objetivos.id, { onDelete: 'set null' }),
+  gcalEventId: text('gcal_event_id'), // recurring event id en Google Calendar
+  color: varchar('color', { length: 16 }).default('#FF5A1F'),
+  emoji: varchar('emoji', { length: 8 }),
+  activo: boolean('activo').default(true).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+}, (t) => ({
+  idxActivo: index('idx_habitos_activo').on(t.activo),
+  idxCategoria: index('idx_habitos_categoria').on(t.categoria),
+}));
+
+// ====== HABITO COMPLETIONS (tracking diario) ======
+export const habitoCompletions = pgTable('habito_completions', {
+  id: serial('id').primaryKey(),
+  habitoId: integer('habito_id').references(() => habitos.id, { onDelete: 'cascade' }).notNull(),
+  fecha: varchar('fecha', { length: 10 }).notNull(), // YYYY-MM-DD
+  completado: boolean('completado').default(false).notNull(),
+  tiempoRealMin: integer('tiempo_real_min'),
+  notas: text('notas'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+}, (t) => ({
+  uxHabitoFecha: uniqueIndex('ux_completion_habito_fecha').on(t.habitoId, t.fecha),
+}));
+
+// ====== TAREAS (extender existente con objetivo + gcal) ======
+// NOTE: ya existe `tasks`. Acá agregamos columnas vía migración.
+// objetivoId + gcalEventId + tipo (one_off/recurring) van como migration SQL alter.
+
+// ====== GOOGLE CALENDAR CREDS (single row para owner) ======
+export const googleCalendarCreds = pgTable('google_calendar_creds', {
+  id: serial('id').primaryKey(),
+  accessToken: text('access_token').notNull(),
+  refreshToken: text('refresh_token').notNull(),
+  calendarId: varchar('calendar_id', { length: 256 }).default('primary').notNull(),
+  scope: text('scope'),
+  tokenType: varchar('token_type', { length: 32 }).default('Bearer'),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  email: varchar('email', { length: 128 }),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
 // ====== METRIC SNAPSHOTS (trends diarios) ======
 export const metricSnapshots = pgTable('metric_snapshots', {
   id: serial('id').primaryKey(),
