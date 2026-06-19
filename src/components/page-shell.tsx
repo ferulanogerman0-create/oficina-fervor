@@ -1,4 +1,5 @@
 import { Sidebar } from './sidebar';
+import { BugReport } from './bug-report';
 import { LogOut } from 'lucide-react';
 
 export function PageShell({
@@ -26,6 +27,7 @@ export function PageShell({
         </header>
         <div className="p-8">{children}</div>
       </main>
+      <BugReport app="oficina" endpoint="/api/bugs" usuario="Germán" />
     </div>
   );
 }

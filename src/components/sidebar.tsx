@@ -2,7 +2,7 @@ import Link from 'next/link';
 import {
   LayoutDashboard, Users, Megaphone, Film, Target,
   ListChecks, CalendarDays, BarChart3, Flame, Settings,
-  Zap, Trophy,
+  Zap, Trophy, LifeBuoy,
 } from 'lucide-react';
 
 const NAV = [
@@ -16,6 +16,7 @@ const NAV = [
   { href: '/crm', label: 'CRM', icon: Target },
   { href: '/contenido', label: 'Contenido', icon: CalendarDays },
   { href: '/metricas', label: 'Métricas', icon: BarChart3 },
+  { href: '/soporte', label: 'Soporte', icon: LifeBuoy },
   { href: '/config', label: 'Config', icon: Settings },
 ];
 

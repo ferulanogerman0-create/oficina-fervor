@@ -13,6 +13,21 @@ const SCOPES = [
   'https://www.googleapis.com/auth/userinfo.email',
 ].join(' ');
 
+/**
+ * Origin público real detrás del proxy (EasyPanel/nginx).
+ * `req.nextUrl.origin` resuelve al host interno (https://0.0.0.0:80) → Google
+ * rechaza el redirect_uri ("invalid_request / doesn't comply with secure policy").
+ * Usamos x-forwarded-host (+ https forzado) o GOOGLE_REDIRECT_ORIGIN si está seteado.
+ */
+export function publicOrigin(req: Request): string {
+  const env = process.env.GOOGLE_REDIRECT_ORIGIN || process.env.PUBLIC_URL;
+  if (env) return env.replace(/\/$/, '');
+  const host = req.headers.get('x-forwarded-host') || req.headers.get('host') || '';
+  if (host && !/^0\.0\.0\.0|^127\.|^localhost/.test(host)) return `https://${host}`;
+  const proto = (req.headers.get('x-forwarded-proto') || 'http').split(',')[0].trim();
+  return host ? `${proto}://${host}` : '';
+}
+
 export function getOAuthStartUrl(origin: string) {
   const params = new URLSearchParams({
     client_id: process.env.GOOGLE_CLIENT_ID || '',

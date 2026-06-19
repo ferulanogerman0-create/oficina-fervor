@@ -1,7 +1,8 @@
 import { PageShell } from '@/components/page-shell';
 import { listClientes } from '@/lib/actions/clientes';
 import { listMetaAccounts, upsertMetaAccount, syncClienteAll } from '@/lib/actions/meta-accounts';
-import { Check, X, RefreshCw, Plug, Flame } from 'lucide-react';
+import { Check, X, RefreshCw, Plug, Flame, Facebook } from 'lucide-react';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +15,8 @@ const ago = (d: Date | null) => {
   return `hace ${Math.floor(s / 86400)}d`;
 };
 
-export default async function ConfigPage() {
+export default async function ConfigPage({ searchParams }: { searchParams: Promise<{ meta?: string; meta_error?: string }> }) {
+  const sp = await searchParams;
   const [clientes, accounts] = await Promise.all([listClientes(), listMetaAccounts()]);
   const byClient = new Map(accounts.map((a) => [a.clientId, a]));
   const env = {
@@ -27,6 +29,28 @@ export default async function ConfigPage() {
 
   return (
     <PageShell kicker="Setup" title="Configuración">
+      {/* OAuth Meta — connect FERVOR esPropio */}
+      <div className="card mb-6 border-fervor-flame/30 bg-fervor-flame/5">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <div className="kicker mb-1">Auto-conexión Meta</div>
+            <h2 className="font-display text-lg font-bold text-fervor-paper">Conectar cuenta FERVOR vía OAuth</h2>
+            <p className="text-xs text-fervor-smoke mt-1 max-w-2xl">
+              Click → OAuth Meta con wolfdmagency → guarda Page+IG+adAccount auto en cuenta propia FERVOR. Requiere BM Verified + env <code>META_APP_ID/SECRET</code>.
+            </p>
+          </div>
+          <Link href="/api/meta/oauth/start" className="btn-primary text-sm shadow-flame flex items-center gap-2">
+            <Facebook className="h-4 w-4" /> Conectar Meta
+          </Link>
+        </div>
+        {sp.meta === 'ok' && (
+          <div className="mt-3 text-xs text-ok flex items-center gap-1.5"><Check className="h-3 w-3" /> Conexión Meta guardada en cuenta propia FERVOR.</div>
+        )}
+        {sp.meta_error && (
+          <div className="mt-3 text-xs text-alert flex items-center gap-1.5"><X className="h-3 w-3" /> Error: {sp.meta_error}</div>
+        )}
+      </div>
+
       {/* entorno */}
       <div className="card mb-6">
         <div className="kicker mb-2">Entorno</div>

@@ -324,3 +324,20 @@ export const metricSnapshots = pgTable('metric_snapshots', {
 }, (t) => ({
   uxClientDate: uniqueIndex('ux_snap_client_date').on(t.clientId, t.date),
 }));
+
+// ====== BUG REPORTS / SOPORTE (colector central de todas las apps) ======
+export const bugReports = pgTable('bug_reports', {
+  id: serial('id').primaryKey(),
+  app: varchar('app', { length: 48 }).notNull(), // tutaller / agenciafacil / fma / oficina
+  mensaje: text('mensaje').notNull(),
+  url: varchar('url', { length: 512 }), // página donde estaba el user
+  usuario: varchar('usuario', { length: 128 }), // quién reporta (si la app lo manda)
+  contacto: varchar('contacto', { length: 160 }), // email/tel opcional
+  userAgent: varchar('user_agent', { length: 512 }),
+  estado: varchar('estado', { length: 24 }).default('nuevo').notNull(), // nuevo / revisado / resuelto / descartado
+  nota: text('nota'), // mi diagnóstico / solución propuesta
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  ixApp: index('ix_bug_app').on(t.app),
+  ixEstado: index('ix_bug_estado').on(t.estado),
+}));
