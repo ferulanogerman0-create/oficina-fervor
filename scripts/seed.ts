@@ -91,46 +91,48 @@ async function main() {
     }
   }
 
-  // ===== HABITOS DIARIOS (Lun-Vie) =====
+  // ===== HABITOS DIARIOS (Lun-Vie ventana real: 9:30-12 + 13-18) =====
   const seedHabitos = [
-    // ----- DIARIO -----
+    // ----- MAÑANA 9:30-12 -----
     { titulo: '10 connection requests LinkedIn', categoria: 'captacion',
-      frecuencia: 'diaria', diasSemana: '1,2,3,4,5', horaDefault: '09:00',
-      tiempoEstimadoMin: 20, emoji: '🔗',
+      frecuencia: 'diaria', diasSemana: '1,2,3,4,5', horaDefault: '09:30',
+      tiempoEstimadoMin: 45, emoji: '🔗',
       descripcion: 'Manual. SIN mensaje en la request. Target: founders agencias chicas LATAM.',
       objetivoTitulo: '90 conexiones LinkedIn calificadas' },
     { titulo: 'Responder DMs IG + LinkedIn', categoria: 'captacion',
-      frecuencia: 'diaria', diasSemana: '1,2,3,4,5', horaDefault: '09:30',
-      tiempoEstimadoMin: 30, emoji: '💬',
+      frecuencia: 'diaria', diasSemana: '1,2,3,4,5', horaDefault: '10:15',
+      tiempoEstimadoMin: 45, emoji: '💬',
       descripcion: 'Inbox 0 antes de seguir. Responder personalmente, sin templates rígidos.',
       objetivoTitulo: 'Cerrar 3 clientes recurrentes nuevos' },
     { titulo: '1 post IG feed publicado', categoria: 'contenido',
-      frecuencia: 'diaria', diasSemana: '1,2,3,4,5,6', horaDefault: '10:00',
-      tiempoEstimadoMin: 30, emoji: '📸',
+      frecuencia: 'diaria', diasSemana: '1,2,3,4,5,6', horaDefault: '11:00',
+      tiempoEstimadoMin: 45, emoji: '📸',
       descripcion: 'Carrusel, reel o post single. Brand FERVOR. Caso o lección con número.',
       objetivoTitulo: '90 posts IG feed publicados' },
     { titulo: '3-5 stories IG', categoria: 'contenido',
-      frecuencia: 'diaria', diasSemana: '1,2,3,4,5,6', horaDefault: '11:00',
+      frecuencia: 'diaria', diasSemana: '1,2,3,4,5,6', horaDefault: '11:45',
       tiempoEstimadoMin: 15, emoji: '📲',
       descripcion: 'Behind-the-scenes, work-in-progress, snippets de cliente, polls.' },
+
+    // ----- TARDE 13-18 -----
     { titulo: 'Check métricas oficina', categoria: 'admin',
-      frecuencia: 'diaria', diasSemana: '1,2,3,4,5', horaDefault: '14:00',
-      tiempoEstimadoMin: 10, emoji: '📊',
+      frecuencia: 'diaria', diasSemana: '1,2,3,4,5', horaDefault: '13:00',
+      tiempoEstimadoMin: 15, emoji: '📊',
       descripcion: 'Ads spend, leads nuevos, web visits, DMs pendientes.' },
     { titulo: 'Delivery cliente activo', categoria: 'delivery',
-      frecuencia: 'diaria', diasSemana: '1,2,3,4,5', horaDefault: '14:30',
-      tiempoEstimadoMin: 180, emoji: '⚙️',
-      descripcion: 'Bloque profundo: dev, debugging, calls cliente.' },
-    { titulo: 'Review pipeline tomorrow', categoria: 'admin',
-      frecuencia: 'diaria', diasSemana: '1,2,3,4,5', horaDefault: '18:00',
-      tiempoEstimadoMin: 10, emoji: '🎯',
-      descripcion: 'Qué hay mañana: calls, deadlines, posts a publicar.' },
+      frecuencia: 'diaria', diasSemana: '1,2,3,4,5', horaDefault: '13:15',
+      tiempoEstimadoMin: 240, emoji: '⚙️',
+      descripcion: 'Bloque profundo 4h: dev, debugging, calls cliente.' },
+    { titulo: 'Review pipeline + 2do round DMs', categoria: 'admin',
+      frecuencia: 'diaria', diasSemana: '1,2,3,4,5', horaDefault: '17:30',
+      tiempoEstimadoMin: 30, emoji: '🎯',
+      descripcion: 'Qué hay mañana: calls, deadlines, posts. Segundo round responder DMs.' },
 
-    // ----- SEMANALES -----
+    // ----- SEMANALES (movidos a banda real) -----
     { titulo: 'Planning semana + revisión KPIs', categoria: 'admin',
-      frecuencia: 'semanal', diasSemana: '1', horaDefault: '08:30',
+      frecuencia: 'semanal', diasSemana: '1', horaDefault: '13:00',
       tiempoEstimadoMin: 30, emoji: '🗓️',
-      descripcion: 'Lunes. Revisión KPIs semana anterior + qué armar esta semana.' },
+      descripcion: 'Lunes 13:00. Revisión KPIs semana anterior + qué armar esta semana.' },
     { titulo: 'Programar 2 posts LinkedIn semana', categoria: 'contenido',
       frecuencia: 'semanal', diasSemana: '1', horaDefault: '15:00',
       tiempoEstimadoMin: 60, emoji: '💼',
@@ -149,26 +151,40 @@ async function main() {
       tiempoEstimadoMin: 120, emoji: '✍️',
       descripcion: 'Sábado. Producción profunda: bloque para próxima semana.' },
 
-    // ----- MENSUALES -----
+    // ----- MENSUALES (movidos a 13:00 si caían fuera) -----
     { titulo: 'Review mes + planning mes siguiente', categoria: 'admin',
-      frecuencia: 'mensual', diaMes: 1, horaDefault: '08:30',
+      frecuencia: 'mensual', diaMes: 1, horaDefault: '13:00',
       tiempoEstimadoMin: 90, emoji: '📅',
-      descripcion: 'Día 1. KPIs mes anterior, ajustes estrategia, foco mes nuevo.' },
+      descripcion: 'Día 1 13:00. KPIs mes anterior, ajustes estrategia, foco mes nuevo.' },
     { titulo: 'Mid-month adjust', categoria: 'admin',
-      frecuencia: 'mensual', diaMes: 15, horaDefault: '09:00',
+      frecuencia: 'mensual', diaMes: 15, horaDefault: '13:00',
       tiempoEstimadoMin: 30, emoji: '⚖️',
-      descripcion: 'Día 15. Tracking estoy on/off pace para KPIs del mes?' },
+      descripcion: 'Día 15 13:00. Tracking estoy on/off pace para KPIs del mes?' },
     { titulo: 'Reportings clientes + cobranza check', categoria: 'delivery',
       frecuencia: 'mensual', diaMes: 28, horaDefault: '15:00',
       tiempoEstimadoMin: 90, emoji: '💰',
       descripcion: 'Fin de mes. Generar PDF reportings + verificar pagos recurrentes.' },
   ];
 
+  // Mapeo legacy → nuevo título (por si user había hábito viejo)
+  const renames: Record<string, string> = {
+    'Review pipeline tomorrow': 'Review pipeline + 2do round DMs',
+  };
   for (const h of seedHabitos) {
+    const objId = (h as any).objetivoTitulo ? objetivoIds[(h as any).objetivoTitulo] : undefined;
+    const { objetivoTitulo, ...rest } = h as any;
+    // Renombrá el viejo (si existe) al nuevo título antes del lookup
+    for (const [oldT, newT] of Object.entries(renames)) {
+      if (newT === h.titulo) {
+        const [old] = await db.select().from(schema.habitos).where(eq(schema.habitos.titulo, oldT)).limit(1);
+        if (old) {
+          await db.update(schema.habitos).set({ titulo: newT }).where(eq(schema.habitos.id, old.id));
+          console.log('↻ Hábito renombrado', oldT, '→', newT);
+        }
+      }
+    }
     const [exists] = await db.select().from(schema.habitos).where(eq(schema.habitos.titulo, h.titulo)).limit(1);
     if (!exists) {
-      const objId = (h as any).objetivoTitulo ? objetivoIds[(h as any).objetivoTitulo] : undefined;
-      const { objetivoTitulo, ...rest } = h as any;
       await db.insert(schema.habitos).values({
         ...rest,
         objetivoId: objId ?? null,
@@ -176,7 +192,19 @@ async function main() {
       } as typeof schema.habitos.$inferInsert);
       console.log('✓ Hábito', h.titulo);
     } else {
-      console.log('· Hábito', h.titulo, 'ya existe');
+      // Update horarios/duración/descripción si cambiaron en el seed
+      await db.update(schema.habitos).set({
+        descripcion: rest.descripcion,
+        categoria: rest.categoria,
+        frecuencia: rest.frecuencia,
+        diasSemana: rest.diasSemana ?? null,
+        diaMes: rest.diaMes ?? null,
+        horaDefault: rest.horaDefault,
+        tiempoEstimadoMin: rest.tiempoEstimadoMin,
+        emoji: rest.emoji ?? null,
+        objetivoId: objId ?? null,
+      }).where(eq(schema.habitos.id, exists.id));
+      console.log('↻ Hábito actualizado', h.titulo);
     }
   }
 
