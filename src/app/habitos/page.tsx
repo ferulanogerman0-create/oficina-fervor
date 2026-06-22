@@ -1,5 +1,6 @@
 import { Sidebar } from '@/components/sidebar';
-import { getHabitosHoy, getStreak } from '@/lib/actions/habits';
+import { redirect } from 'next/navigation';
+import { getHabitosHoy, getStreak, syncPendingToGcal } from '@/lib/actions/habits';
 import { db, schema } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import Link from 'next/link';
@@ -16,7 +17,7 @@ const CAT_COLORS: Record<string, string> = {
   personal: '#A08880',
 };
 
-export default async function HabitosPage({ searchParams }: { searchParams: Promise<{ fecha?: string; gcal?: string }> }) {
+export default async function HabitosPage({ searchParams }: { searchParams: Promise<{ fecha?: string; gcal?: string; h?: string; t?: string }> }) {
   const sp = await searchParams;
   const hoy = sp.fecha || new Date().toISOString().slice(0, 10);
   const habitos = await getHabitosHoy(hoy);
@@ -46,10 +47,20 @@ export default async function HabitosPage({ searchParams }: { searchParams: Prom
             <h1 className="font-display text-3xl font-bold text-fervor-paper">Hábitos del día</h1>
           </div>
           <div className="flex items-center gap-2">
-            {!gcalConnected && (
+            {!gcalConnected ? (
               <Link href="/api/gcal/start" className="btn-secondary text-sm flex items-center gap-2">
                 <Calendar className="h-4 w-4" /> Conectar Google Calendar
               </Link>
+            ) : (
+              <form action={async () => {
+                'use server';
+                const r = await syncPendingToGcal();
+                redirect(`/habitos?gcal=synced&h=${r.habitos}&t=${r.tareas}`);
+              }}>
+                <button type="submit" className="btn-secondary text-sm flex items-center gap-2">
+                  <Calendar className="h-4 w-4" /> Sincronizar Calendar
+                </button>
+              </form>
             )}
             <Link href="/habitos/nuevo" className="btn-primary text-sm shadow-flame flex items-center gap-1.5">
               <Plus className="h-4 w-4" /> Hábito
@@ -60,7 +71,12 @@ export default async function HabitosPage({ searchParams }: { searchParams: Prom
         <div className="p-8 space-y-6">
           {sp.gcal === 'ok' && (
             <div className="card border-fervor-flame bg-fervor-flame/5 text-fervor-flame text-sm">
-              ✓ Google Calendar conectado{gcal[0]?.email ? ` (${gcal[0].email})` : ''}.
+              ✓ Google Calendar conectado{gcal[0]?.email ? ` (${gcal[0].email})` : ''}. Tocá <b>Sincronizar Calendar</b> para volcar tus hábitos.
+            </div>
+          )}
+          {sp.gcal === 'synced' && (
+            <div className="card border-fervor-flame bg-fervor-flame/5 text-fervor-flame text-sm">
+              ✓ Sincronizado: {sp.h || 0} hábito(s){Number(sp.t) ? ` + ${sp.t} tarea(s)` : ''} al Calendar (desde hoy). Si ya estaban, no se duplican.
             </div>
           )}
 

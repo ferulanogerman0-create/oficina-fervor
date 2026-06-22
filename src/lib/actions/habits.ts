@@ -2,7 +2,7 @@
 import { db, schema } from '@/lib/db';
 import { and, desc, eq, gte, lte, sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
-import { buildEventTimes, createEvent, deleteEvent, habitToRRULE } from '@/lib/google/gcal';
+import { buildEventTimes, createEvent, deleteEvent, getActiveAccessToken, habitToRRULE } from '@/lib/google/gcal';
 
 // ===================== HABITOS =====================
 
@@ -56,6 +56,47 @@ export async function createHabito(input: {
   }
   revalidatePath('/habitos');
   return created;
+}
+
+// Backfill: crea eventos en GCal para hábitos/tareas que ya existían antes de
+// conectar Calendar (sin gcalEventId). Hábitos = recurrentes desde HOY.
+export async function syncPendingToGcal(): Promise<{ ok: boolean; habitos: number; tareas: number; error?: string }> {
+  const token = await getActiveAccessToken();
+  if (!token) return { ok: false, habitos: 0, tareas: 0, error: 'gcal_no_conectado' };
+
+  let hCount = 0, tCount = 0;
+  const hoy = new Date().toISOString().slice(0, 10);
+
+  // Hábitos activos sin evento → recurrente desde hoy
+  const habs = await db.select().from(schema.habitos)
+    .where(and(eq(schema.habitos.activo, true), sql`${schema.habitos.gcalEventId} is null`));
+  for (const h of habs) {
+    const { start, end } = buildEventTimes(hoy, h.horaDefault, h.tiempoEstimadoMin || 30);
+    const recurrence = habitToRRULE(h.frecuencia, h.diasSemana, h.diaMes);
+    const ev = await createEvent({
+      summary: `${h.emoji || '🔥'} ${h.titulo}`,
+      description: h.descripcion || undefined,
+      start, end, recurrence, colorId: '6',
+    });
+    if (ev?.id) { await db.update(schema.habitos).set({ gcalEventId: ev.id }).where(eq(schema.habitos.id, h.id)); hCount++; }
+  }
+
+  // Tareas pendientes con vencimiento sin evento → one-off (best-effort)
+  try {
+    const tks = await db.select().from(schema.tasks)
+      .where(and(eq(schema.tasks.done, false), sql`${(schema.tasks as any).gcalEventId} is null`, sql`${schema.tasks.dueAt} is not null`));
+    for (const t of tks) {
+      const due = new Date(t.dueAt as any);
+      const fecha = due.toISOString().slice(0, 10);
+      const hora = due.toISOString().slice(11, 16);
+      const { start, end } = buildEventTimes(fecha, hora, 30);
+      const ev = await createEvent({ summary: `📌 ${t.titulo}`, description: (t as any).detalle || undefined, start, end, colorId: '5' });
+      if (ev?.id) { await db.update(schema.tasks).set({ gcalEventId: ev.id } as any).where(eq(schema.tasks.id, t.id)); tCount++; }
+    }
+  } catch { /* columna gcal_event_id en tasks puede no existir; ignorar */ }
+
+  revalidatePath('/habitos');
+  return { ok: true, habitos: hCount, tareas: tCount };
 }
 
 export async function toggleHabitoActivo(id: number) {
