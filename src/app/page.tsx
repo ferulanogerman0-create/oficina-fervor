@@ -3,10 +3,22 @@ import { TrendChart } from '@/components/trend-chart';
 import { dashboardKpis, dashboardTrend, dashboardClientes, dashboardTareas } from '@/lib/actions/dashboard';
 import { syncAllClientes } from '@/lib/actions/meta-accounts';
 import { getDashboardStats, getObjetivosActivos } from '@/lib/actions/habits';
-import { Flame, Eye, Heart, Users, DollarSign, Target, ArrowUpRight, RefreshCw, Zap, Trophy } from 'lucide-react';
+import { db, schema } from '@/lib/db';
+import { and, eq, sql } from 'drizzle-orm';
+import { Flame, Eye, Heart, Users, DollarSign, Target, ArrowUpRight, RefreshCw, Zap, Trophy, AlertCircle, FileText } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
+
+async function comercialAtencion() {
+  const cutoff48 = new Date(Date.now() - 48 * 3600 * 1000).toISOString();
+  const cutoff5d = new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString();
+  const [stuck] = await db.select({ n: sql<number>`count(*)` }).from(schema.leads)
+    .where(sql`${schema.leads.estado} IN ('nuevo','contactado') AND COALESCE(${schema.leads.ultimoContacto}, ${schema.leads.createdAt}) < ${cutoff48}`);
+  const [stale] = await db.select({ n: sql<number>`count(*)` }).from(schema.propuestas)
+    .where(and(eq(schema.propuestas.estado, 'enviada'), sql`${schema.propuestas.sentAt} < ${cutoff5d}`));
+  return { leadsStuck: Number(stuck?.n ?? 0), propuestasStale: Number(stale?.n ?? 0) };
+}
 
 const compact = (v: unknown) => {
   const n = Number(v) || 0;
@@ -16,10 +28,11 @@ const compact = (v: unknown) => {
 const money = (v: unknown) => '$' + (Number(v) || 0).toLocaleString('es-AR', { maximumFractionDigits: 0 });
 
 export default async function Home() {
-  const [k, trend, clientes, tareas, stats, objetivos] = await Promise.all([
+  const [k, trend, clientes, tareas, stats, objetivos, atencion] = await Promise.all([
     dashboardKpis(), dashboardTrend(), dashboardClientes(), dashboardTareas(),
-    getDashboardStats(), getObjetivosActivos(),
+    getDashboardStats(), getObjetivosActivos(), comercialAtencion(),
   ]);
+  const totalAtencion = atencion.leadsStuck + atencion.propuestasStale;
 
   const kpis = [
     { label: 'Alcance 30d', value: compact(k.reach), icon: Eye },
@@ -47,6 +60,32 @@ export default async function Home() {
         </header>
 
         <div className="p-8 space-y-8">
+          {/* Atención comercial — sólo si hay algo */}
+          {totalAtencion > 0 && (
+            <section className="card border-fervor-flame/40 bg-fervor-flame/8 flex items-center gap-4 flex-wrap">
+              <div className="flex items-center gap-2 text-fervor-flame">
+                <AlertCircle className="h-5 w-5" />
+                <span className="font-display text-base uppercase tracking-wide">Atención comercial</span>
+              </div>
+              <div className="flex items-center gap-3 flex-wrap ml-auto">
+                {atencion.leadsStuck > 0 && (
+                  <Link href="/crm" className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-fervor-ink-2 border border-fervor-flame/40 hover:border-fervor-flame transition-colors text-sm">
+                    <Users className="h-3.5 w-3.5 text-fervor-flame" />
+                    <span className="font-display text-fervor-flame">{atencion.leadsStuck}</span>
+                    <span className="text-fervor-smoke text-xs">leads sin seguimiento +48h</span>
+                  </Link>
+                )}
+                {atencion.propuestasStale > 0 && (
+                  <Link href="/propuestas" className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-fervor-ink-2 border border-fervor-flame/40 hover:border-fervor-flame transition-colors text-sm">
+                    <FileText className="h-3.5 w-3.5 text-fervor-flame" />
+                    <span className="font-display text-fervor-flame">{atencion.propuestasStale}</span>
+                    <span className="text-fervor-smoke text-xs">propuestas enviadas +5d sin cierre</span>
+                  </Link>
+                )}
+              </div>
+            </section>
+          )}
+
           {/* Hábitos + Objetivos */}
           <section className="grid grid-cols-1 md:grid-cols-4 gap-3">
             <Link href="/habitos" className="card card-hover">

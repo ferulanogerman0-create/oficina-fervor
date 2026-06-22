@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
 
   const today = new Date().toISOString().slice(0, 10);
   const startOfDay = new Date(today + 'T00:00:00.000Z');
-  const out: any = { date: today, snapshots: {}, habits: { synced: 0, skipped: 0 } };
+  const out: any = { date: today, snapshots: {}, habits: { synced: 0, skipped: 0 }, leadsStuck: 0, propuestasStale: 0 };
 
   // ============== 1. SNAPSHOTS clientes ==============
   const clients = await db.select({ id: schema.clients.id })
@@ -86,6 +86,25 @@ export async function GET(req: NextRequest) {
   } else {
     out.habits.skipped = 'gcal_not_connected';
   }
+
+  // ============== 3. LEADS STUCK + PROPUESTAS STALE ==============
+  // Count leads en nuevo/contactado sin actividad > 48h
+  const cutoff48h = new Date(Date.now() - 48 * 3600 * 1000);
+  const [stuck] = await db.select({ n: sql<number>`count(*)` }).from(schema.leads)
+    .where(and(
+      sql`${schema.leads.estado} IN ('nuevo','contactado')`,
+      sql`COALESCE(${schema.leads.ultimoContacto}, ${schema.leads.createdAt}) < ${cutoff48h.toISOString()}`,
+    ));
+  out.leadsStuck = Number(stuck?.n ?? 0);
+
+  // Propuestas enviadas hace > 5 días sin aceptar/rechazar
+  const cutoff5d = new Date(Date.now() - 5 * 24 * 3600 * 1000);
+  const [stale] = await db.select({ n: sql<number>`count(*)` }).from(schema.propuestas)
+    .where(and(
+      eq(schema.propuestas.estado, 'enviada'),
+      sql`${schema.propuestas.sentAt} < ${cutoff5d.toISOString()}`,
+    ));
+  out.propuestasStale = Number(stale?.n ?? 0);
 
   out.ok = true;
   return NextResponse.json(out);
