@@ -224,6 +224,27 @@ export const webVisits = pgTable('web_visits', {
   uxClientDatePath: uniqueIndex('ux_web_client_date_path').on(t.clientId, t.date, t.path, t.refSource),
 }));
 
+// ====== PROPUESTAS comerciales (PDF generator) ======
+export const propuestas = pgTable('propuestas', {
+  id: serial('id').primaryKey(),
+  clientName: varchar('client_name', { length: 256 }).notNull(),
+  clientEmail: varchar('client_email', { length: 256 }),
+  clientNegocio: varchar('client_negocio', { length: 256 }),
+  servicios: jsonb('servicios').notNull(), // [{key, label, descripcion, setup, mrr, incluido}]
+  setupTotal: numeric('setup_total', { precision: 12, scale: 2 }).default('0').notNull(),
+  mrrTotal: numeric('mrr_total', { precision: 12, scale: 2 }).default('0').notNull(),
+  currency: varchar('currency', { length: 8 }).default('USD').notNull(),
+  notasInternas: text('notas_internas'),
+  estado: varchar('estado', { length: 32 }).default('borrador').notNull(), // borrador/enviada/aceptada/rechazada
+  pdfUrl: text('pdf_url'), // path interno o URL pública
+  sentAt: timestamp('sent_at', { withTimezone: true }),
+  acceptedAt: timestamp('accepted_at', { withTimezone: true }),
+  validityDays: integer('validity_days').default(7).notNull(),
+  leadId: integer('lead_id').references(() => leads.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+}, (t) => ({ idxEstado: index('idx_propuestas_estado').on(t.estado) }));
+
 // ====== OBJETIVOS (90d / mensual / semanal) ======
 export const objetivos = pgTable('objetivos', {
   id: serial('id').primaryKey(),

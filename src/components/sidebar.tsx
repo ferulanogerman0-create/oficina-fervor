@@ -2,7 +2,7 @@ import Link from 'next/link';
 import {
   LayoutDashboard, Users, Megaphone, Film, Target,
   ListChecks, CalendarDays, BarChart3, Flame, Settings,
-  Zap, Trophy, LifeBuoy,
+  Zap, Trophy, LifeBuoy, FileText,
 } from 'lucide-react';
 
 const NAV = [
@@ -11,6 +11,7 @@ const NAV = [
   { href: '/objetivos', label: 'Objetivos', icon: Trophy },
   { href: '/tareas', label: 'Tareas', icon: ListChecks },
   { href: '/clientes', label: 'Clientes', icon: Users },
+  { href: '/propuestas', label: 'Propuestas', icon: FileText },
   { href: '/ads', label: 'Meta Ads', icon: Megaphone },
   { href: '/videos', label: 'Video Analytics', icon: Film },
   { href: '/crm', label: 'CRM', icon: Target },
