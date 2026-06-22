@@ -1,15 +1,23 @@
-import { getPropuesta, marcarEnviada, marcarAceptada, marcarRechazada, deletePropuesta } from '@/lib/actions/propuestas';
+import { getPropuesta, marcarEnviada, marcarAceptada, marcarRechazada, deletePropuesta, ensurePublicToken, sendPropuestaMail } from '@/lib/actions/propuestas';
 import { renderPropuestaHTML, type PropuestaData } from '@/lib/propuestas/template';
 import { notFound } from 'next/navigation';
+import { headers } from 'next/headers';
 import Link from 'next/link';
-import { ArrowLeft, Send, Check, X, Trash2, FileText } from 'lucide-react';
+import { ArrowLeft, Send, Check, X, Trash2, FileText, Link as LinkIcon, Mail, Eye } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-export default async function PropuestaPreviewPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function PropuestaPreviewPage({ params, searchParams }: { params: Promise<{ id: string }>, searchParams: Promise<Record<string, string | undefined>> }) {
   const { id } = await params;
+  const sp = await searchParams;
   const p = await getPropuesta(Number(id));
   if (!p) return notFound();
+
+  const h = await headers();
+  const host = h.get('x-forwarded-host') || h.get('host') || 'oficina.wolfdma.website';
+  const proto = h.get('x-forwarded-proto') || 'https';
+  const baseUrl = `${proto}://${host}`;
+  const publicUrl = p.publicToken ? `${baseUrl}/p/${p.publicToken}` : null;
 
   const data: PropuestaData = {
     id: p.id,
@@ -37,12 +45,37 @@ export default async function PropuestaPreviewPage({ params }: { params: Promise
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
+          {p.viewCount > 0 && (
+            <span className="text-[10px] font-mono uppercase tracking-wider text-fervor-flame flex items-center gap-1">
+              <Eye className="h-3 w-3" /> {p.viewCount} {p.viewCount === 1 ? 'vista' : 'vistas'}
+            </span>
+          )}
+          {!publicUrl ? (
+            <form action={async () => { 'use server'; await ensurePublicToken(p.id); }}>
+              <button className="btn-secondary text-xs flex items-center gap-1.5"><LinkIcon className="h-3.5 w-3.5" /> Generar link público</button>
+            </form>
+          ) : (
+            <a href={publicUrl} target="_blank" className="btn-secondary text-xs flex items-center gap-1.5">
+              <LinkIcon className="h-3.5 w-3.5" /> Ver link público
+            </a>
+          )}
+          {p.clientEmail && (
+            <form action={async () => {
+              'use server';
+              const h2 = await headers();
+              const host2 = h2.get('x-forwarded-host') || h2.get('host') || 'oficina.wolfdma.website';
+              const proto2 = h2.get('x-forwarded-proto') || 'https';
+              try { await sendPropuestaMail(p.id, `${proto2}://${host2}`); } catch (e: any) { console.error('sendPropuestaMail:', e?.message); }
+            }}>
+              <button className="btn-primary text-xs flex items-center gap-1.5 shadow-flame"><Mail className="h-3.5 w-3.5" /> Enviar por email</button>
+            </form>
+          )}
           <Link href={`/propuestas/${p.id}/print`} target="_blank" className="btn-secondary text-xs flex items-center gap-1.5">
-            <FileText className="h-3.5 w-3.5" /> Abrir para imprimir/PDF
+            <FileText className="h-3.5 w-3.5" /> PDF
           </Link>
           {p.estado === 'borrador' && (
             <form action={async () => { 'use server'; await marcarEnviada(p.id); }}>
-              <button className="btn-primary text-xs flex items-center gap-1.5 shadow-flame"><Send className="h-3.5 w-3.5" /> Marcar enviada</button>
+              <button className="btn-secondary text-xs flex items-center gap-1.5"><Send className="h-3.5 w-3.5" /> Marcar enviada</button>
             </form>
           )}
           {p.estado === 'enviada' && (

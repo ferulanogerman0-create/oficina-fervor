@@ -240,10 +240,16 @@ export const propuestas = pgTable('propuestas', {
   sentAt: timestamp('sent_at', { withTimezone: true }),
   acceptedAt: timestamp('accepted_at', { withTimezone: true }),
   validityDays: integer('validity_days').default(7).notNull(),
+  publicToken: varchar('public_token', { length: 64 }),
+  viewedAt: timestamp('viewed_at', { withTimezone: true }),
+  viewCount: integer('view_count').default(0).notNull(),
   leadId: integer('lead_id').references(() => leads.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-}, (t) => ({ idxEstado: index('idx_propuestas_estado').on(t.estado) }));
+}, (t) => ({
+  idxEstado: index('idx_propuestas_estado').on(t.estado),
+  uniqToken: uniqueIndex('uniq_propuestas_token').on(t.publicToken),
+}));
 
 // ====== OBJETIVOS (90d / mensual / semanal) ======
 export const objetivos = pgTable('objetivos', {
