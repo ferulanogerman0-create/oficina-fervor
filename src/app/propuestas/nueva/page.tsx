@@ -6,7 +6,8 @@ import { ArrowLeft } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-export default function NuevaPropuestaPage() {
+export default async function NuevaPropuestaPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+  const sp = await searchParams;
   return (
     <div className="min-h-screen flex bg-fervor-ink grid-bg">
       <Sidebar />
@@ -16,6 +17,7 @@ export default function NuevaPropuestaPage() {
           <div>
             <div className="kicker mb-1">Comercial</div>
             <h1 className="font-display text-3xl font-bold text-fervor-paper">Nueva propuesta</h1>
+            {sp.leadId && <div className="text-xs text-fervor-smoke mt-1">desde lead #{sp.leadId}</div>}
           </div>
         </header>
 
@@ -26,15 +28,15 @@ export default function NuevaPropuestaPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <label className="space-y-1.5 block">
                 <div className="text-xs font-mono uppercase tracking-wider text-fervor-smoke">Nombre*</div>
-                <input name="client_name" required className="input" placeholder="Germán Ferulano" />
+                <input name="client_name" required className="input" placeholder="Germán Ferulano" defaultValue={sp.client_name || ''} />
               </label>
               <label className="space-y-1.5 block">
                 <div className="text-xs font-mono uppercase tracking-wider text-fervor-smoke">Email</div>
-                <input name="client_email" type="email" className="input" placeholder="cliente@email.com" />
+                <input name="client_email" type="email" className="input" placeholder="cliente@email.com" defaultValue={sp.client_email || ''} />
               </label>
               <label className="space-y-1.5 block md:col-span-2">
                 <div className="text-xs font-mono uppercase tracking-wider text-fervor-smoke">Negocio / Rubro</div>
-                <input name="client_negocio" className="input" placeholder="Taller mecánico de Campana" />
+                <input name="client_negocio" className="input" placeholder="Taller mecánico de Campana" defaultValue={sp.client_negocio || ''} />
               </label>
             </div>
           </div>

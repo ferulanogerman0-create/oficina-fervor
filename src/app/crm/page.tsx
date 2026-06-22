@@ -2,7 +2,8 @@ import { PageShell } from '@/components/page-shell';
 import { listLeads, moveLead } from '@/lib/actions/leads';
 import { ETAPAS_LEAD as ETAPAS } from '@/lib/types';
 import { listClientes } from '@/lib/actions/clientes';
-import { Phone, Mail, ChevronRight } from 'lucide-react';
+import { Phone, Mail, ChevronRight, FileText } from 'lucide-react';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
@@ -56,6 +57,11 @@ export default async function CrmPage({ searchParams }: { searchParams: Promise<
                     {l.motivo && <div className="text-fervor-smoke mt-1 line-clamp-2">{l.motivo}</div>}
                     {/* avanzar estado */}
                     <NextStageButton id={l.id} current={e} />
+                    {/* convertir a propuesta */}
+                    <Link href={`/propuestas/nueva?leadId=${l.id}&client_name=${encodeURIComponent(l.nombre || '')}&client_email=${encodeURIComponent(l.email || '')}&client_negocio=${encodeURIComponent(l.cliente || '')}`}
+                          className="text-fervor-flame hover:text-fervor-flame-l text-[10px] font-mono uppercase tracking-wider flex items-center gap-1 mt-1">
+                      <FileText className="h-3 w-3" /> + Propuesta
+                    </Link>
                   </div>
                 ))}
               </div>
