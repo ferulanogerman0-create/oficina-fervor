@@ -138,8 +138,50 @@ export const contentIdeas = pgTable('content_ideas', {
   plannedFor: timestamp('planned_for', { withTimezone: true }),
   postedAt: timestamp('posted_at', { withTimezone: true }),
   postId: integer('post_id').references(() => posts.id, { onDelete: 'set null' }),
+  // calendario de contenido
+  plataforma: varchar('plataforma', { length: 24 }), // instagram / tiktok / youtube / linkedin
+  guion: text('guion'), // guion completo del contenido
+  ganchoId: integer('gancho_id'), // FK lógico a ganchos.id (sin constraint para no acoplar)
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 }, (t) => ({ idxClientEstado: index('idx_ideas_client_estado').on(t.clientId, t.estado) }));
+
+// ====== TABLERO DE CONTENIDO — BAÚL DE GANCHOS ======
+export const ganchos = pgTable('ganchos', {
+  id: serial('id').primaryKey(),
+  texto: text('texto').notNull(), // el gancho original / transcripción
+  plantilla: text('plantilla'), // versión reusable (con [variables]) generada por IA
+  angulos: jsonb('angulos'), // string[] de ángulos sugeridos para reusarlo
+  nicho: varchar('nicho', { length: 64 }), // automotriz / saas / agencias / contable / marketing / general
+  tipo: varchar('tipo', { length: 48 }), // pregunta / contraste / lista / historia / dato / polemica / promesa
+  autorHandle: varchar('autor_handle', { length: 128 }), // quién lo tiró primero
+  autorSeguidores: integer('autor_seguidores'),
+  fuenteUrl: text('fuente_url'),
+  vistas: integer('vistas'),
+  plataforma: varchar('plataforma', { length: 24 }), // instagram / tiktok / youtube / linkedin
+  usado: boolean('usado').default(false).notNull(),
+  favorito: boolean('favorito').default(false).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+}, (t) => ({
+  idxNicho: index('idx_ganchos_nicho').on(t.nicho),
+  idxTipo: index('idx_ganchos_tipo').on(t.tipo),
+}));
+
+// ====== TABLERO DE CONTENIDO — TENDENCIAS (12 fuentes/día) ======
+export const tendencias = pgTable('tendencias', {
+  id: serial('id').primaryKey(),
+  fuente: varchar('fuente', { length: 64 }).notNull(), // anthropic / openai / x / nicho
+  titulo: varchar('titulo', { length: 512 }).notNull(),
+  url: text('url'),
+  resumen: text('resumen'), // resumen corto generado por IA
+  categoria: varchar('categoria', { length: 24 }).default('ignorar').notNull(), // gancho / explicativo / ignorar
+  potencial: integer('potencial').default(0).notNull(), // 0-100 score de potencial de contenido
+  publishedAt: timestamp('published_at', { withTimezone: true }),
+  fetchedAt: timestamp('fetched_at', { withTimezone: true }).defaultNow().notNull(),
+  archivado: boolean('archivado').default(false).notNull(),
+}, (t) => ({
+  uxUrl: uniqueIndex('ux_tendencias_url').on(t.url),
+  idxCategoria: index('idx_tendencias_categoria').on(t.categoria, t.potencial),
+}));
 
 // ====== DMs (Instagram Direct + Messenger conversations) ======
 export const dmConversations = pgTable('dm_conversations', {

@@ -2,11 +2,12 @@ import Link from 'next/link';
 import {
   LayoutDashboard, Users, Megaphone, Film, Target,
   ListChecks, CalendarDays, BarChart3, Flame, Settings,
-  Zap, Trophy, LifeBuoy, FileText,
+  Zap, Trophy, LifeBuoy, FileText, LayoutGrid,
 } from 'lucide-react';
 
 const NAV = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/tablero', label: 'Tablero Contenido', icon: LayoutGrid },
   { href: '/habitos', label: 'Hábitos', icon: Zap },
   { href: '/objetivos', label: 'Objetivos', icon: Trophy },
   { href: '/tareas', label: 'Tareas', icon: ListChecks },
