@@ -23,7 +23,10 @@ export default async function CrmPage({ searchParams }: { searchParams: Promise<
   const [leads, clientes] = await Promise.all([listLeads({ clientId }), listClientes()]);
   return (
     <PageShell kicker="Pipeline" title="CRM Leads" actions={
-      <a href="#nuevo" className="btn-primary text-sm shadow-flame">+ Lead</a>
+      <div className="flex items-center gap-2">
+        <Link href="/crm/importar" className="px-3 py-1.5 rounded-lg text-sm border border-fervor-border text-fervor-smoke hover:text-fervor-flame hover:border-fervor-flame transition-colors">Importar LinkedIn</Link>
+        <a href="#nuevo" className="btn-primary text-sm shadow-flame">+ Lead</a>
+      </div>
     }>
       <div className="flex items-center gap-2 mb-4 flex-wrap">
         <a href="/crm" className={`px-3 py-1.5 rounded-lg text-xs font-mono uppercase tracking-wider border ${!clientId ? 'border-fervor-flame text-fervor-flame' : 'border-fervor-border text-fervor-smoke hover:text-fervor-ash'}`}>Todos</a>
