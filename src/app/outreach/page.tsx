@@ -14,91 +14,95 @@ type Tanda = {
   nota: string;
 };
 
+// ICP: clientes FINALES — negocios tradicionales con operación compleja
+// (clientes, datos, CRM, flujo de conversaciones, inventario) que SÍ viven
+// en LinkedIn. FERVOR ordena + automatiza SU operación. No partnership.
 const TANDAS: Tanda[] = [
   {
-    key: 'agencias', dia: 1, label: 'Agencias chicas LATAM', emoji: '🏢',
+    key: 'abogados', dia: 1, label: 'Estudios jurídicos', emoji: '⚖️',
     filtros: [
-      { campo: 'Sector', valor: 'Servicios de publicidad · Servicios de marketing · Diseño' },
+      { campo: 'Sector', valor: 'Servicios jurídicos · Práctica de la abogacía' },
       { campo: 'Tamaño de la empresa', valor: '1-10 · 11-50' },
-      { campo: 'Antigüedad', valor: 'Propietario · Socio · Director · CXO' },
-      { campo: 'Función', valor: 'Marketing · Desarrollo de negocios · Emprendimiento' },
+      { campo: 'Antigüedad', valor: 'Propietario · Socio · Director' },
+      { campo: 'Función', valor: 'Servicios jurídicos · Emprendimiento' },
     ],
-    cargo: 'Fundador OR CEO OR Director OR Dueño',
-    keywords: 'agencia AND (marketing OR publicidad OR diseño) NOT recruiter NOT headhunter',
-    nota: 'Hola [Nombre], vi que llevás [agencia] en [ciudad]. Trabajo con agencias chicas dando delivery tech (apps PyME, bots WhatsApp, automatización) bajo white-label. Si te suma para escalar sin sumar headcount, conectemos.',
+    cargo: 'Abogado OR Socio OR Titular OR Fundador',
+    keywords: '("estudio jurídico" OR abogados OR "law firm") NOT recruiter',
+    nota: 'Hola [Nombre], vi tu estudio en [ciudad]. Ayudo a estudios jurídicos a ordenar y automatizar su operación: seguimiento de casos, intake de consultas y recordatorios de vencimientos, para que no dependa de estar encima de todo. Si te interesa, conectemos.',
   },
   {
-    key: 'consultores', dia: 2, label: 'Consultores PyMEs', emoji: '🧭',
-    filtros: [
-      { campo: 'Sector', valor: 'Servicios de consultoría y BPO · Coaching empresarial' },
-      { campo: 'Tamaño de la empresa', valor: 'Trabajador independiente · 1-10 · 11-50' },
-      { campo: 'Antigüedad', valor: 'Propietario · Socio · CXO' },
-      { campo: 'Función', valor: 'Consultoría · Emprendimiento' },
-    ],
-    cargo: 'Consultor OR "Asesor de negocios" OR "Business Coach"',
-    keywords: '(PyMEs OR "pequeñas empresas" OR emprendedores) NOT recruiter',
-    nota: 'Hola [Nombre], vi tu trabajo con PyMEs. Yo armo el lado tech (gestión + automatización WhatsApp + web) para los negocios que vos asesorás. Quizás suma cruzar referidos. ¿Conectamos?',
-  },
-  {
-    key: 'contadores', dia: 3, label: 'Contadores / Asesores', emoji: '📊',
+    key: 'contadores', dia: 2, label: 'Estudios contables', emoji: '📊',
     filtros: [
       { campo: 'Sector', valor: 'Contabilidad · Servicios financieros' },
       { campo: 'Tamaño de la empresa', valor: 'Trabajador independiente · 1-10 · 11-50' },
       { campo: 'Antigüedad', valor: 'Propietario · Socio · Director' },
-      { campo: 'Función', valor: 'Finanzas · Contabilidad' },
+      { campo: 'Función', valor: 'Contabilidad · Finanzas' },
     ],
-    cargo: 'Contador OR "Asesor impositivo" OR Socio',
-    keywords: '(PyMEs OR emprendedores OR "estudio contable") NOT recruiter',
-    nota: 'Hola [Nombre], vi tu trabajo con PyMEs. Yo armo el lado tech (gestión + automatización WhatsApp + web) para los negocios que vos asesorás. Quizás suma cruzar referidos. ¿Conectamos?',
+    cargo: 'Contador OR Socio OR Titular OR Fundador',
+    keywords: '("estudio contable" OR contadores OR "contador público") NOT recruiter',
+    nota: 'Hola [Nombre], vi tu estudio contable en [ciudad]. Ayudo a contadores a automatizar lo repetitivo: seguimiento de clientes, pedido de documentación y recordatorios de vencimientos. Menos tareas a mano, más control. ¿Conectamos?',
   },
   {
-    key: 'saas', dia: 4, label: 'Founders SaaS LATAM', emoji: '🚀',
+    key: 'inmobiliarias', dia: 3, label: 'Inmobiliarias', emoji: '🏠',
     filtros: [
-      { campo: 'Sector', valor: 'Desarrollo de software · Tecnología, información e internet' },
+      { campo: 'Sector', valor: 'Bienes raíces · Servicios inmobiliarios' },
       { campo: 'Tamaño de la empresa', valor: '1-10 · 11-50' },
-      { campo: 'Antigüedad', valor: 'Propietario · Fundador · CXO' },
-      { campo: 'Función', valor: 'Emprendimiento · Ingeniería · Marketing' },
+      { campo: 'Antigüedad', valor: 'Propietario · Socio · Director · Gerente' },
+      { campo: 'Función', valor: 'Bienes raíces · Ventas · Emprendimiento' },
     ],
-    cargo: 'Founder OR CEO OR "Co-fundador"',
-    keywords: '(SaaS OR startup OR "early stage") NOT recruiter',
-    nota: 'Hola [Nombre], me crucé con [empresa]. Yo armo branding + landing + ads para SaaS LATAM en early stage. Si estás en momento de salir a vender o mejorar funnel, conectemos.',
+    cargo: 'Director OR Titular OR Broker OR Martillero OR Fundador',
+    keywords: '(inmobiliaria OR "bienes raíces" OR "real estate") NOT recruiter',
+    nota: 'Hola [Nombre], vi tu inmobiliaria en [ciudad]. Ayudo a inmobiliarias a no perder consultas: CRM de interesados, respuesta automática por WhatsApp y seguimiento de cada lead hasta la visita. Si te suma, conectemos.',
   },
   {
-    key: 'marketers', dia: 5, label: 'Marketers / Performance', emoji: '📈',
+    key: 'consultores', dia: 4, label: 'Consultores (empresa · finanzas · RRHH)', emoji: '🧭',
     filtros: [
-      { campo: 'Sector', valor: 'Servicios de marketing · Servicios de publicidad' },
-      { campo: 'Tamaño de la empresa', valor: 'Trabajador independiente · 1-10' },
-      { campo: 'Antigüedad', valor: 'Director · Gerente · Senior' },
-      { campo: 'Función', valor: 'Marketing' },
+      { campo: 'Sector', valor: 'Servicios de consultoría y BPO · Recursos humanos · Servicios financieros' },
+      { campo: 'Tamaño de la empresa', valor: 'Trabajador independiente · 1-10 · 11-50' },
+      { campo: 'Antigüedad', valor: 'Propietario · Socio · CXO' },
+      { campo: 'Función', valor: 'Consultoría · Recursos humanos · Finanzas' },
     ],
-    cargo: '"Marketing Manager" OR Performance OR Growth',
-    keywords: '(freelance OR PyME OR performance) NOT recruiter',
-    nota: 'Hola [Nombre], vi tu trabajo en performance. Yo armo la parte tech (landings rápidas, bots WA, app de gestión) para los clientes que tomás. Conectemos por si surge match.',
+    cargo: 'Consultor OR Asesor OR Fundador',
+    keywords: '(consultor OR asesor) AND (empresas OR negocios OR financiero OR "recursos humanos") NOT recruiter',
+    nota: 'Hola [Nombre], vi tu trabajo como consultor. Ayudo a consultores a sistematizar su operación: pipeline de clientes, onboarding y seguimiento automatizado, para escalar sin que todo dependa de vos. ¿Conectamos?',
+  },
+  {
+    key: 'coaches', dia: 5, label: 'Coaches e inversionistas', emoji: '🎯',
+    filtros: [
+      { campo: 'Sector', valor: 'Coaching empresarial · Servicios financieros · Desarrollo profesional' },
+      { campo: 'Tamaño de la empresa', valor: 'Trabajador independiente · 1-10' },
+      { campo: 'Antigüedad', valor: 'Propietario · Socio' },
+      { campo: 'Función', valor: 'Emprendimiento · Consultoría · Finanzas' },
+    ],
+    cargo: 'Coach OR "Business Coach" OR Inversionista OR "Asesor financiero"',
+    keywords: '(coach OR mentor OR inversionista OR "asesor financiero") NOT recruiter',
+    nota: 'Hola [Nombre], vi tu trabajo. Ayudo a profesionales como vos a captar y dar seguimiento a clientes con un sistema: embudos, agendado y respuestas automáticas. Si te interesa ordenar esa parte, conectemos.',
   },
 ];
 
-const MSG2 = 'Gracias por conectar, [Nombre]. Te leo y me da curiosidad: hoy en [empresa], ¿qué parte de la operación te come más tiempo o depende 100% de vos?';
-const MSG3 = 'Te tiro un caso por si te sirve de referencia: a un cliente le armé el sistema completo (web + app de gestión + bot de WhatsApp con IA). Hoy opera con orden. Lo dejé documentado acá → wolfdma.website/caso-fma\nSi querés, coordinamos una llamada corta y lo vemos para tu caso.';
+const MSG2 = 'Gracias por conectar, [Nombre]. Te leo y me da curiosidad: hoy en [empresa], ¿qué parte de la operación te come más tiempo o depende 100% de vos? (seguimiento de clientes, carga de datos, responder consultas…)';
+const MSG3 = 'Te tiro un caso por si te sirve de referencia: a un cliente le armé el sistema completo (web + app de gestión + bot de WhatsApp con IA que carga datos por audio). Hoy opera con orden y no se le escapa ningún cliente. Lo dejé documentado acá → wolfdma.website/caso-fma\nSi querés, coordinamos una llamada corta y lo vemos para tu caso.';
 
 const FILTROS_BASE: Filtro[] = [
   { campo: 'Geografía', valor: 'Argentina · Chile · Uruguay · Colombia · México · Perú · España' },
   { campo: 'Idioma del perfil', valor: 'Español' },
-  { campo: 'Antigüedad en la empresa', valor: 'Cualquiera (no filtrar de más)' },
+  { campo: 'Antigüedad', valor: 'Propietario · Socio · Director (que SIENTAN el dolor + decidan)' },
 ];
 const SPOTLIGHTS = [
   'Publicó en LinkedIn (últimos 30 días) → más activos = más responden',
-  'Cambió de empleo hace poco → momento bueno para hablar',
+  'Cambió de empleo hace poco → buen momento para hablar',
   'Tenés conexiones en común → mencionarlo sube la aceptación',
 ];
 const EXCLUIR = [
-  'Recruiter / Headhunter (sumá NOT recruiter en Palabras clave)',
-  'SDR / Sales Development Rep',
+  'Recruiter / Headhunter (ya va NOT recruiter en Palabras clave)',
+  'Empleados en relación de dependencia (querés DUEÑOS/SOCIOS que deciden)',
   'Estudiante / Student',
   'Perfiles con badge "Open to work" prominente',
 ];
 const REGLAS = [
   'Tono FORMAL LATAM. Sin che/dale/loco/manija. Máx 1 emoji. 6-10 líneas. "Coordinar llamada", no "agendemos call".',
   'Variá SIEMPRE: nombre + empresa + UN detalle del perfil. Nada de copy-paste idéntico.',
+  'Hablás de SU negocio (cliente final), no de revender ni partnership.',
   'Si no acepta en 7 días → cancelar invite y buscar otro target.',
   'NO automatizar (Phantombuster / Dripify / LinkedHelper). LinkedIn flag = cuenta perdida.',
   'Tope: 100 invites/semana (LinkedIn flag ~200/sem).',
@@ -107,7 +111,7 @@ const CHECKLIST = [
   'Responder DMs pendientes',
   'Abrir Sales Navigator → Búsqueda de leads',
   'Rellenar los filtros de la tanda del día (abajo)',
-  'Filtrar (excluir recruiters / estudiantes / open-to-work)',
+  'Filtrar (excluir recruiters / empleados / estudiantes / open-to-work)',
   '10-15 invites con nota personalizada',
   'Cargar los que avancen en el CRM',
   'Mensaje 2 a los que conectaron hace 3 días',
@@ -140,7 +144,7 @@ export default function OutreachPage() {
 
   return (
     <PageShell
-      kicker="Sales Navigator · 10-15 invites/día · slot 10:15"
+      kicker="Sales Navigator · clientes finales · 10-15 invites/día · 10:15"
       title="Outreach"
       actions={
         <div className="flex items-center gap-2">
@@ -150,7 +154,7 @@ export default function OutreachPage() {
       }
     >
       <div className="mb-5 text-sm text-fervor-smoke">
-        Armado para <b className="text-fervor-ash">Sales Navigator → Búsqueda de leads</b>. Aplicá primero los <b className="text-fervor-ash">filtros base</b> (abajo) y después los de la <b className="text-fervor-ash">tanda del día</b>. Sin SN: usá los campos <b className="text-fervor-ash">Cargo</b> y <b className="text-fervor-ash">Palabras clave</b> en la búsqueda normal.
+        <b className="text-fervor-ash">Clientes finales</b> — negocios tradicionales que manejan clientes, datos, CRM y flujo de conversaciones (estudios jurídicos y contables, inmobiliarias, consultores, coaches). FERVOR <b className="text-fervor-ash">ordena y automatiza SU operación</b>. Armado para <b className="text-fervor-ash">Sales Navigator</b>; sin SN usá los campos Cargo + Palabras clave en la búsqueda normal.
       </div>
 
       {/* FILTROS BASE */}
@@ -172,7 +176,7 @@ export default function OutreachPage() {
         <div className="flex items-center gap-2 text-fervor-flame mb-1 font-mono text-xs uppercase tracking-wider">
           <CalendarClock size={15} /> {diaLabel} · tanda de hoy
         </div>
-        {finde && <div className="text-sm text-fervor-smoke mb-3">Fin de semana — no hay tanda asignada. Te dejo la del lunes (Agencias) por si querés adelantar.</div>}
+        {finde && <div className="text-sm text-fervor-smoke mb-3">Fin de semana — no hay tanda asignada. Te dejo la del lunes (Estudios jurídicos) por si querés adelantar.</div>}
         {tanda && (
           <>
             <div className="font-display text-2xl text-fervor-paper mb-4">{tanda.emoji} {tanda.label}</div>
@@ -262,7 +266,7 @@ export default function OutreachPage() {
       </div>
 
       <div className="mt-6 text-center text-xs text-fervor-smoke font-mono">
-        Meta 90 días: 200-300 conexiones · 30-50 charlas · 8-12 calls · 2-3 clientes
+        Al principio tomá lo que venga · redirigí de a poco hacia estos clientes ideales
       </div>
     </PageShell>
   );
