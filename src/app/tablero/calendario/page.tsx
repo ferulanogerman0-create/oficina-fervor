@@ -1,7 +1,8 @@
 import { PageShell } from '@/components/page-shell';
 import Link from 'next/link';
 import { getMonthItems, getUnscheduled, getIdea, programarIdea, desprogramarIdea, guardarGuion } from '@/lib/actions/calendario';
-import { ChevronLeft, ChevronRight, CalendarDays, X } from 'lucide-react';
+import { guardarPublicacion, publicarAhora } from '@/lib/actions/publicar';
+import { ChevronLeft, ChevronRight, CalendarDays, X, Send, CheckCircle2, AlertTriangle, Image as ImageIcon } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -78,6 +79,7 @@ export default async function CalendarioPage({ searchParams }: { searchParams: P
         {/* panel derecho */}
         <div className="w-full xl:w-80 flex-shrink-0 space-y-4">
           {detalle ? (
+            <>
             <div className="card">
               <div className="flex items-start justify-between mb-2">
                 <div className="kicker">Guion</div>
@@ -97,6 +99,43 @@ export default async function CalendarioPage({ searchParams }: { searchParams: P
                 </div>
               </form>
             </div>
+
+            {/* ── Publicación automática (Fase 2) ── */}
+            <div className="card">
+              <div className="kicker mb-2 flex items-center gap-1.5"><Send className="h-3.5 w-3.5" /> Publicar en IG/FB</div>
+              {detalle.publishStatus === 'publicado' && (
+                <div className="flex items-center gap-1.5 text-[11px] text-ok mb-2"><CheckCircle2 className="h-3.5 w-3.5" /> Publicado{detalle.postedAt ? ` · ${new Date(detalle.postedAt).toLocaleDateString('es-AR')}` : ''}</div>
+              )}
+              {detalle.publishStatus === 'publicando' && <div className="text-[11px] text-warn mb-2 font-mono uppercase">Publicando…</div>}
+              {detalle.publishStatus === 'error' && (
+                <div className="flex items-start gap-1.5 text-[11px] text-alert mb-2"><AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" /><span>{detalle.publishError || 'Error al publicar'}</span></div>
+              )}
+              <form action={guardarPublicacion} className="space-y-2">
+                <input type="hidden" name="id" value={detalle.id} />
+                <label className="flex items-center gap-2 text-[11px] text-fervor-smoke cursor-pointer">
+                  <ImageIcon className="h-3.5 w-3.5" />
+                  <input type="file" name="imagen" accept="image/*" className="block w-full text-[11px] text-fervor-ash file:mr-2 file:rounded file:border-0 file:bg-fervor-flame file:px-2 file:py-1 file:text-[11px] file:font-semibold file:text-black file:cursor-pointer" />
+                </label>
+                {detalle.imageData && (
+                  <div className="flex items-center gap-2">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={`/api/media/${detalle.id}`} alt="" className="w-12 h-12 rounded object-cover border border-fervor-border" />
+                    <span className="text-[10px] text-ok">imagen cargada ✓</span>
+                  </div>
+                )}
+                <textarea name="caption" rows={4} defaultValue={detalle.caption || ''} placeholder="Caption / copy del post…" className="input-field w-full text-xs normal-case font-sans tracking-normal" />
+                <label className="flex items-center gap-2 text-xs text-fervor-ash cursor-pointer">
+                  <input type="checkbox" name="auto_publish" defaultChecked={detalle.autoPublish} className="accent-fervor-flame" />
+                  Publicar solo cuando llegue la fecha programada
+                </label>
+                <button className="btn-secondary text-xs w-full">Guardar publicación</button>
+              </form>
+              <form action={async () => { 'use server'; await publicarAhora(detalle.id); }} className="mt-2">
+                <button className="btn-primary text-sm w-full shadow-flame flex items-center justify-center gap-1.5" disabled={!detalle.imageData}><Send className="h-3.5 w-3.5" /> Publicar ahora</button>
+              </form>
+              {!detalle.imageData && <div className="text-[10px] text-fervor-smoke/60 mt-1.5">Subí una imagen para poder publicar.</div>}
+            </div>
+            </>
           ) : (
             <div className="card">
               <div className="kicker mb-2 flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5" /> Para programar</div>

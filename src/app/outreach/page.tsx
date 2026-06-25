@@ -21,9 +21,9 @@ const TANDAS: Tanda[] = [
   {
     key: 'abogados', dia: 1, label: 'Estudios jurídicos', emoji: '⚖️',
     filtros: [
-      { campo: 'Sector', valor: 'Servicios jurídicos · Práctica de la abogacía' },
-      { campo: 'Tamaño de la empresa', valor: '1-10 · 11-50' },
-      { campo: 'Antigüedad', valor: 'Propietario · Socio · Director' },
+      { campo: 'Industria', valor: 'Servicios jurídicos · Práctica de la abogacía' },
+      { campo: 'Empleados en la empresa', valor: '1-10 · 11-50' },
+      { campo: 'Nivel de responsabilidad', valor: 'Propietario · Socio · Director' },
       { campo: 'Función', valor: 'Servicios jurídicos · Emprendimiento' },
     ],
     cargo: 'Abogado OR Socio OR Titular OR Fundador',
@@ -33,9 +33,9 @@ const TANDAS: Tanda[] = [
   {
     key: 'contadores', dia: 2, label: 'Estudios contables', emoji: '📊',
     filtros: [
-      { campo: 'Sector', valor: 'Contabilidad · Servicios financieros' },
-      { campo: 'Tamaño de la empresa', valor: 'Trabajador independiente · 1-10 · 11-50' },
-      { campo: 'Antigüedad', valor: 'Propietario · Socio · Director' },
+      { campo: 'Industria', valor: 'Contabilidad · Servicios financieros' },
+      { campo: 'Empleados en la empresa', valor: 'Trabajador independiente · 1-10 · 11-50' },
+      { campo: 'Nivel de responsabilidad', valor: 'Propietario · Socio · Director' },
       { campo: 'Función', valor: 'Contabilidad · Finanzas' },
     ],
     cargo: 'Contador OR Socio OR Titular OR Fundador',
@@ -45,10 +45,10 @@ const TANDAS: Tanda[] = [
   {
     key: 'inmobiliarias', dia: 3, label: 'Inmobiliarias', emoji: '🏠',
     filtros: [
-      { campo: 'Sector', valor: 'Bienes raíces · Servicios inmobiliarios' },
-      { campo: 'Tamaño de la empresa', valor: '1-10 · 11-50' },
-      { campo: 'Antigüedad', valor: 'Propietario · Socio · Director · Gerente' },
-      { campo: 'Función', valor: 'Bienes raíces · Ventas · Emprendimiento' },
+      { campo: 'Industria', valor: 'Bienes inmuebles · Servicios inmobiliarios' },
+      { campo: 'Empleados en la empresa', valor: '1-10 · 11-50' },
+      { campo: 'Nivel de responsabilidad', valor: 'Propietario · Socio · Director · Gerente' },
+      { campo: 'Función', valor: 'Ventas · Emprendimiento · Operaciones' },
     ],
     cargo: 'Director OR Titular OR Broker OR Martillero OR Fundador',
     keywords: '(inmobiliaria OR "bienes raíces" OR "real estate") NOT recruiter',
@@ -57,9 +57,9 @@ const TANDAS: Tanda[] = [
   {
     key: 'consultores', dia: 4, label: 'Consultores (empresa · finanzas · RRHH)', emoji: '🧭',
     filtros: [
-      { campo: 'Sector', valor: 'Servicios de consultoría y BPO · Recursos humanos · Servicios financieros' },
-      { campo: 'Tamaño de la empresa', valor: 'Trabajador independiente · 1-10 · 11-50' },
-      { campo: 'Antigüedad', valor: 'Propietario · Socio · CXO' },
+      { campo: 'Industria', valor: 'Consultoría y servicios a empresas · Recursos humanos · Servicios financieros' },
+      { campo: 'Empleados en la empresa', valor: 'Trabajador independiente · 1-10 · 11-50' },
+      { campo: 'Nivel de responsabilidad', valor: 'Propietario · Socio · CXO' },
       { campo: 'Función', valor: 'Consultoría · Recursos humanos · Finanzas' },
     ],
     cargo: 'Consultor OR Asesor OR Fundador',
@@ -69,9 +69,9 @@ const TANDAS: Tanda[] = [
   {
     key: 'coaches', dia: 5, label: 'Coaches e inversionistas', emoji: '🎯',
     filtros: [
-      { campo: 'Sector', valor: 'Coaching empresarial · Servicios financieros · Desarrollo profesional' },
-      { campo: 'Tamaño de la empresa', valor: 'Trabajador independiente · 1-10' },
-      { campo: 'Antigüedad', valor: 'Propietario · Socio' },
+      { campo: 'Industria', valor: 'Coaching y desarrollo profesional · Servicios financieros' },
+      { campo: 'Empleados en la empresa', valor: 'Trabajador independiente · 1-10' },
+      { campo: 'Nivel de responsabilidad', valor: 'Propietario · Socio' },
       { campo: 'Función', valor: 'Emprendimiento · Consultoría · Finanzas' },
     ],
     cargo: 'Coach OR "Business Coach" OR Inversionista OR "Asesor financiero"',
@@ -84,14 +84,14 @@ const MSG2 = 'Gracias por conectar, [Nombre]. Te leo y me da curiosidad: hoy en 
 const MSG3 = 'Te tiro un caso por si te sirve de referencia: a un cliente le armé el sistema completo (web + app de gestión + bot de WhatsApp con IA que carga datos por audio). Hoy opera con orden y no se le escapa ningún cliente. Lo dejé documentado acá → wolfdma.website/caso-fma\nSi querés, coordinamos una llamada corta y lo vemos para tu caso.';
 
 const FILTROS_BASE: Filtro[] = [
-  { campo: 'Geografía', valor: 'Argentina · Chile · Uruguay · Colombia · México · Perú · España' },
+  { campo: 'Ubicación', valor: 'Argentina · Chile · Uruguay · Colombia · México · Perú · España' },
   { campo: 'Idioma del perfil', valor: 'Español' },
-  { campo: 'Antigüedad', valor: 'Propietario · Socio · Director (que SIENTAN el dolor + decidan)' },
+  { campo: 'Nivel de responsabilidad', valor: 'Propietario · Socio · Director (que SIENTAN el dolor + decidan)' },
 ];
 const SPOTLIGHTS = [
-  'Publicó en LinkedIn (últimos 30 días) → más activos = más responden',
-  'Cambió de empleo hace poco → buen momento para hablar',
-  'Tenés conexiones en común → mencionarlo sube la aceptación',
+  'Ha publicado en LinkedIn (Actualizaciones recientes) → más activos = más responden',
+  'Cambios de empleo (Actualizaciones recientes) → buen momento para hablar',
+  'Contacto: 2º grado + Experiencias en común → mencionarlo sube la aceptación',
 ];
 const EXCLUIR = [
   'Recruiter / Headhunter (ya va NOT recruiter en Palabras clave)',

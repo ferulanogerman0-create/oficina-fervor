@@ -142,6 +142,15 @@ export const contentIdeas = pgTable('content_ideas', {
   plataforma: varchar('plataforma', { length: 24 }), // instagram / tiktok / youtube / linkedin
   guion: text('guion'), // guion completo del contenido
   ganchoId: integer('gancho_id'), // FK lógico a ganchos.id (sin constraint para no acoplar)
+  // ── Auto-publish (Fase 2) ──
+  caption: text('caption'), // copy a publicar en IG/FB
+  imageData: text('image_data'), // base64 de la imagen a publicar
+  imageMime: varchar('image_mime', { length: 32 }),
+  autoPublish: boolean('auto_publish').default(false).notNull(), // publica solo al llegar plannedFor
+  publishStatus: varchar('publish_status', { length: 16 }), // null/pendiente/publicando/publicado/error
+  publishError: text('publish_error'),
+  igPublishedMediaId: varchar('ig_published_media_id', { length: 64 }),
+  fbPostId: varchar('fb_post_id', { length: 64 }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 }, (t) => ({ idxClientEstado: index('idx_ideas_client_estado').on(t.clientId, t.estado) }));
 
