@@ -5,7 +5,7 @@ import {
   Zap, Trophy, LifeBuoy, FileText, LayoutGrid, Send,
 } from 'lucide-react';
 
-const NAV = [
+export const NAV = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/tablero', label: 'Tablero Contenido', icon: LayoutGrid },
   { href: '/habitos', label: 'Hábitos', icon: Zap },
