@@ -1,12 +1,12 @@
 import { PageShell } from '@/components/page-shell';
 import { CopyButton } from '@/components/copy-button';
-import { MessageSquare, Filter, Ban, ShieldAlert, CheckSquare, Target, Upload, SlidersHorizontal, Sparkles } from 'lucide-react';
+import { MessageSquare, Ban, ShieldAlert, CheckSquare, Target, Upload, SlidersHorizontal, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
 type Filtro = { campo: string; valor: string };
-type Nicho = { key: string; label: string; emoji: string; nota: string };
+type Paso = { key: string; titulo: string; cuando: string; texto: string };
 
 // ICP (2026-06-25): DUEÑOS de negocios que SEGURO viven en LinkedIn y necesitan
 // CRM / automatización de procesos. B2B / profesional / financiero. FERVOR ofrece
@@ -28,32 +28,26 @@ const BUSQUEDA: Filtro[] = [
   },
 ];
 
-// Notas de conexión por nicho. Elegí la que matchee el perfil que estás mirando.
-const NICHOS: Nicho[] = [
+// Secuencia DIRECTA (2026-06-26). Mensaje 1 corto p/ generar curiosidad → la
+// consulta sobre su negocio → el pitch backend + ejemplo/llamada. Sin vueltas.
+const SECUENCIA: Paso[] = [
   {
-    key: 'inmobiliarias', label: 'Inmobiliarias', emoji: '🏠',
-    nota: 'Hola [Nombre], vi tu inmobiliaria en [ciudad]. Ayudo a inmobiliarias a no perder consultas: CRM de interesados, respuesta automática por WhatsApp y seguimiento de cada lead hasta la visita. Si te suma ordenar esa parte, conectemos.',
+    key: 'nota', titulo: 'Nota de conexión', cuando: 'con la invitación · opcional, corta',
+    texto: 'Hola [Nombre], me crucé con tu perfil y me gustó lo que hacés en [empresa]. Te dejo la invitación para conectar.',
   },
   {
-    key: 'coaches', label: 'Coaches', emoji: '🎯',
-    nota: 'Hola [Nombre], vi tu trabajo como coach. Ayudo a profesionales como vos a captar y dar seguimiento a clientes con un sistema: embudos, agendado automático y respuestas listas, para que no se te escape ningún interesado. Si te interesa, conectemos.',
+    key: 'm1', titulo: 'Mensaje 1 · gancho', cuando: 'apenas acepta',
+    texto: 'Gracias por conectar, [Nombre]. ¿Te puedo hacer una consulta?',
   },
   {
-    key: 'inversiones', label: 'Inversiones / Finanzas', emoji: '📈',
-    nota: 'Hola [Nombre], vi tu trabajo en el área financiera. Ayudo a asesores e inversores a sistematizar la captación y el seguimiento de clientes: CRM, onboarding y recordatorios automáticos, para escalar sin que todo dependa de vos. ¿Conectamos?',
+    key: 'm2', titulo: 'Mensaje 2 · la consulta', cuando: 'cuando responde',
+    texto: 'Vi tu trabajo en [empresa] y te quería consultar: ¿cómo vienen manejando hoy las redes y las consultas de clientes?',
   },
   {
-    key: 'seguros', label: 'Seguros (brokers)', emoji: '🛡️',
-    nota: 'Hola [Nombre], vi que trabajás en seguros. Ayudo a productores y brokers a no perder renovaciones ni leads: CRM de clientes, recordatorios de vencimientos y seguimiento automático por WhatsApp. Si te suma, conectemos.',
-  },
-  {
-    key: 'consultoras', label: 'Consultoras / Agencias', emoji: '🧭',
-    nota: 'Hola [Nombre], vi tu trabajo. Ayudo a consultoras y agencias a sistematizar su operación: pipeline de clientes, onboarding y reporting automatizado, para entregar más sin sumar caos. Si te interesa ordenar esa parte, conectemos.',
+    key: 'm3', titulo: 'Mensaje 3 · el pitch', cuando: 'cuando responde',
+    texto: 'Te cuento por qué pregunto: trabajo en el backend de los negocios, buscando puntos de automatización para optimizar el tiempo y maximizar las ganancias. Me meto en todas las áreas — marketing, ventas, operaciones, entrega del servicio y administración. Si te interesa, te paso un ejemplo de alguien con quien trabajé y me decís si te suma, o coordinamos una llamada corta.',
   },
 ];
-
-const MSG2 = 'Gracias por conectar, [Nombre]. Te leo y me da curiosidad: hoy en [empresa], ¿qué parte de la operación te come más tiempo o depende 100% de vos? (seguimiento de clientes, carga de datos, responder consultas…)';
-const MSG3 = 'Te tiro un caso por si te sirve de referencia: a un cliente le armé el sistema completo (web + app de gestión + bot de WhatsApp con IA que carga datos por audio). Hoy opera con orden y no se le escapa ningún cliente. Lo dejé documentado acá → wolfdma.website/caso-fma\nSi querés, coordinamos una llamada corta y lo vemos para tu caso.';
 
 const SPOTLIGHTS = [
   'Ha publicado en LinkedIn (Actualizaciones recientes) → más activos = más responden',
@@ -67,9 +61,10 @@ const EXCLUIR = [
   'Estudiante · perfiles con badge "Open to work" prominente',
 ];
 const REGLAS = [
-  'Tono FORMAL LATAM. Sin che/dale/loco/manija. Máx 1 emoji. 6-10 líneas. "Coordinar llamada", no "agendemos call".',
-  'Variá SIEMPRE: nombre + empresa + UN detalle del perfil. Nada de copy-paste idéntico.',
-  'Hablás de SU negocio (ahorrarle tiempo/plata/dolores de cabeza), no de revender ni partnership.',
+  'Tono DIRECTO y profesional, sin vueltas ni relleno. Frases cortas. Sin che/dale/loco. Máx 1 emoji.',
+  'No vendas en el Mensaje 1 — curiosidad primero. El pitch recién va en el 3.',
+  'Adaptá la consulta del Mensaje 2 a lo que hace el perfil (redes / consultas / seguimiento / turnos / cobranzas).',
+  'Variá: nombre + empresa + UN detalle del perfil. Nada de copy-paste idéntico.',
   'Si no acepta en 7 días → cancelar invite y buscar otro target.',
   'NO automatizar invites (Phantombuster / Dripify / LinkedHelper). LinkedIn flag = cuenta perdida. Invites a mano.',
   'Tope: 100 invites/semana (LinkedIn flag ~200/sem).',
@@ -78,10 +73,11 @@ const CHECKLIST = [
   'Responder DMs pendientes',
   'Abrir Sales Navigator → Búsqueda de posibles clientes (filtros B2B abajo, ya armados)',
   'Revisar el feed de resultados (excluir empleados / empresas grandes / open-to-work)',
-  '10-15 invites con nota personalizada (elegí la nota del nicho que matchea)',
+  '10-15 invites (con nota corta opcional)',
+  'Mensaje 1 apenas aceptan ("¿te puedo hacer una consulta?")',
+  'Mensaje 2 (la consulta) cuando responden',
+  'Mensaje 3 (el pitch + ejemplo/llamada) cuando enganchan',
   'Cargar los que avancen en el CRM',
-  'Mensaje 2 a los que conectaron hace 3 días',
-  'Mensaje 3 a los que respondieron y matchean',
 ];
 
 const card = 'rounded-xl border border-fervor-border bg-fervor-ink-2 p-5';
@@ -127,34 +123,25 @@ export default function OutreachPage() {
         </div>
       </div>
 
-      {/* NOTAS POR NICHO */}
+      {/* SECUENCIA DE MENSAJES */}
       <div className={`${card} mb-6`}>
-        <div className={headRow}><Filter size={15} /> Notas de conexión por nicho (elegí la del perfil que mirás · reemplazá [ ])</div>
-        <div className="grid md:grid-cols-2 gap-3">
-          {NICHOS.map((n) => (
-            <div key={n.key} className="bg-fervor-ink-3 rounded-lg px-4 py-3">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-sm text-fervor-paper font-semibold">{n.emoji} {n.label}</span>
-                <CopyButton text={n.nota} label="Copiar nota" />
+        <div className={headRow}><MessageSquare size={15} /> Secuencia de mensajes · directa (reemplazá [ ])</div>
+        <div className="flex flex-col gap-3">
+          {SECUENCIA.map((p, i) => (
+            <div key={p.key} className="bg-fervor-ink-3 rounded-lg px-4 py-3">
+              <div className="flex items-center justify-between mb-1.5 gap-3">
+                <div className="flex items-baseline gap-2 min-w-0">
+                  <span className="text-fervor-flame font-mono text-xs shrink-0">{i === 0 ? '·' : i}</span>
+                  <span className="text-sm text-fervor-paper font-semibold">{p.titulo}</span>
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-fervor-smoke truncate">{p.cuando}</span>
+                </div>
+                <CopyButton text={p.texto} label="Copiar" />
               </div>
-              <p className="text-sm text-fervor-ash leading-relaxed">{n.nota}</p>
+              <p className="text-sm text-fervor-ash leading-relaxed">{p.texto}</p>
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Mensajes 2 y 3 */}
-      <div className="grid md:grid-cols-2 gap-4 mb-6">
-        <div className={card}>
-          <div className={headRow}><MessageSquare size={15} /> Mensaje 2 · día 3 (sin link)</div>
-          <p className="text-sm text-fervor-ash leading-relaxed mb-3">{MSG2}</p>
-          <CopyButton text={MSG2} label="Copiar mensaje 2" />
-        </div>
-        <div className={card}>
-          <div className={headRow}><MessageSquare size={15} /> Mensaje 3 · día 5-7 (si matchea)</div>
-          <p className="text-sm text-fervor-ash leading-relaxed mb-3 whitespace-pre-line">{MSG3}</p>
-          <CopyButton text={MSG3} label="Copiar mensaje 3" />
-        </div>
+        <p className="text-xs text-fervor-smoke mt-3">Curiosidad → consulta sobre SU negocio → pitch. El caso/link y la llamada recién en el Mensaje 3.</p>
       </div>
 
       {/* Excluir + Reglas */}
