@@ -13,7 +13,7 @@ import { Bug, X, Send, Check } from 'lucide-react';
  */
 export function BugReport({
   app,
-  endpoint = 'https://oficina.wolfdma.website/api/bugs',
+  endpoint = 'https://oficina.fervorar.com/api/bugs',
   usuario,
 }: {
   app: string;

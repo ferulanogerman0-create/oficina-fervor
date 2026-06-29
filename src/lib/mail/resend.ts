@@ -1,4 +1,4 @@
-// Resend mail wrapper. Usa env RESEND_API_KEY + RESEND_FROM (e.g. 'FERVOR <hola@wolfdma.website>')
+// Resend mail wrapper. Usa env RESEND_API_KEY + RESEND_FROM (e.g. 'FERVOR <hola@fervorar.com>')
 // Si no hay env, lanza error explícito p/ que UI lo muestre.
 
 export type MailPayload = {
@@ -12,7 +12,7 @@ export type MailPayload = {
 
 export async function sendMail(p: MailPayload) {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM || 'FERVOR <hola@wolfdma.website>';
+  const from = process.env.RESEND_FROM || 'FERVOR <hola@fervorar.com>';
   if (!apiKey) throw new Error('RESEND_API_KEY no configurada en env');
 
   const res = await fetch('https://api.resend.com/emails', {

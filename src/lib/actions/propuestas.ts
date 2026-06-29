@@ -138,10 +138,10 @@ export async function sendPropuestaMail(id: number, baseUrl: string) {
     </div>
     <a href="${url}" style="display:inline-block;background:#FF5A1F;color:#fff;padding:16px 32px;text-decoration:none;font-weight:bold;text-transform:uppercase;letter-spacing:.04em;font-size:14px;margin:8px 0">Ver propuesta completa →</a>
     <p style="line-height:1.6;opacity:.8;margin-top:24px;font-size:13px">Si tenés dudas o querés ajustar algo, respondeme este mail directamente. Si te gusta, hacé click en "Acepto la propuesta" al final y arrancamos.</p>
-    <p style="margin-top:24px">Saludos,<br><strong>Germán</strong><br><span style="font-size:12px;color:#9a9a9a">FERVOR · wolfdma.website</span></p>
+    <p style="margin-top:24px">Saludos,<br><strong>Germán</strong><br><span style="font-size:12px;color:#9a9a9a">FERVOR · fervorar.com</span></p>
   </div>
 </body></html>`;
-  const text = `Hola ${p.clientName},\n\nTe paso la propuesta para ${p.clientNegocio || 'tu negocio'}.\n\nSetup: ${setupFmt}\nMensual: ${mrrFmt}\nValidez: ${p.validityDays} días\n\nLink: ${url}\n\nSi querés ajustar algo respondeme directo. Si te gusta hacé click en "Acepto la propuesta" al final.\n\nGermán · FERVOR\nwolfdma.website`;
+  const text = `Hola ${p.clientName},\n\nTe paso la propuesta para ${p.clientNegocio || 'tu negocio'}.\n\nSetup: ${setupFmt}\nMensual: ${mrrFmt}\nValidez: ${p.validityDays} días\n\nLink: ${url}\n\nSi querés ajustar algo respondeme directo. Si te gusta hacé click en "Acepto la propuesta" al final.\n\nGermán · FERVOR\nfervorar.com`;
   const replyTo = process.env.RESEND_REPLY_TO || 'wolfdmagency@gmail.com';
 
   const r = await sendMail({

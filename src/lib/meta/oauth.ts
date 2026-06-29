@@ -9,9 +9,9 @@ import { eq } from 'drizzle-orm';
  * Env vars requeridas: META_APP_ID, META_APP_SECRET (cargar en EasyPanel).
  *
  * Redirect URI registrada en Meta App FB Login product:
- *   https://oficina.wolfdma.website/api/meta/oauth/callback
+ *   https://oficina.fervorar.com/api/meta/oauth/callback
  *
- * App Domain: oficina.wolfdma.website (agregar a App Domains en Settings → Basic).
+ * App Domain: oficina.fervorar.com (agregar a App Domains en Settings → Basic).
  */
 
 const V = process.env.META_API_VERSION || 'v21.0';

@@ -1,6 +1,6 @@
 // Cron diario AGRUPADO: corre todos los syncs en 1 call.
 // Configurar en EasyPanel scheduled task o n8n cron:
-//   GET https://oficina.wolfdma.website/api/cron/daily?secret=<CRON_SECRET>
+//   GET https://oficina.fervorar.com/api/cron/daily?secret=<CRON_SECRET>
 // Recomendado: 1x/día 06:00 ART.
 
 import { NextRequest, NextResponse } from 'next/server';

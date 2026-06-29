@@ -257,7 +257,7 @@ export const adAds = pgTable('ad_ads', {
   idxClientCampaign: index('idx_ads_client_camp').on(t.clientId, t.campaignMetaId),
 }));
 
-// ====== WEB ANALYTICS (pageviews wolfdma.website + landings) ======
+// ====== WEB ANALYTICS (pageviews fervorar.com + landings) ======
 export const webVisits = pgTable('web_visits', {
   id: serial('id').primaryKey(),
   clientId: integer('client_id').references(() => clients.id, { onDelete: 'cascade' }).notNull(),

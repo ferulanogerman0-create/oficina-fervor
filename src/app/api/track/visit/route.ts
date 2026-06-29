@@ -3,7 +3,7 @@ import { db, schema } from '@/lib/db';
 import { eq, and, sql } from 'drizzle-orm';
 
 /**
- * Endpoint público para tracking de pageviews desde wolfdma.website
+ * Endpoint público para tracking de pageviews desde fervorar.com
  * (Pixel propio - independiente de Meta Pixel).
  *
  * POST /api/track/visit

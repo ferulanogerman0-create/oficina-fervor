@@ -14,7 +14,7 @@ export default async function PropuestaPreviewPage({ params, searchParams }: { p
   if (!p) return notFound();
 
   const h = await headers();
-  const host = h.get('x-forwarded-host') || h.get('host') || 'oficina.wolfdma.website';
+  const host = h.get('x-forwarded-host') || h.get('host') || 'oficina.fervorar.com';
   const proto = h.get('x-forwarded-proto') || 'https';
   const baseUrl = `${proto}://${host}`;
   const publicUrl = p.publicToken ? `${baseUrl}/p/${p.publicToken}` : null;
@@ -63,7 +63,7 @@ export default async function PropuestaPreviewPage({ params, searchParams }: { p
             <form action={async () => {
               'use server';
               const h2 = await headers();
-              const host2 = h2.get('x-forwarded-host') || h2.get('host') || 'oficina.wolfdma.website';
+              const host2 = h2.get('x-forwarded-host') || h2.get('host') || 'oficina.fervorar.com';
               const proto2 = h2.get('x-forwarded-proto') || 'https';
               try { await sendPropuestaMail(p.id, `${proto2}://${host2}`); } catch (e: any) { console.error('sendPropuestaMail:', e?.message); }
             }}>

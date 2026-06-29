@@ -1,4 +1,4 @@
-// Lead capture público — recibe POST desde wolfdma.website/caso-fma + IG forms
+// Lead capture público — recibe POST desde fervorar.com/caso-fma + IG forms
 // Auth: ninguna (público CORS). Validación básica + insert en leads del cliente FERVOR esPropio.
 //
 // POST body JSON o form-encoded:

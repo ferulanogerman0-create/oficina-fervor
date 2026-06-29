@@ -11,7 +11,7 @@ import { getMetaAccount } from './index';
 
 const V = process.env.META_API_VERSION || 'v21.0';
 const BASE = `https://graph.facebook.com/${V}`;
-const PUBLIC_URL = (process.env.PUBLIC_URL || 'https://oficina.wolfdma.website').replace(/\/$/, '');
+const PUBLIC_URL = (process.env.PUBLIC_URL || 'https://oficina.fervorar.com').replace(/\/$/, '');
 
 async function gpost(path: string, params: Record<string, string>, token: string): Promise<any> {
   const body = new URLSearchParams({ ...params, access_token: token });

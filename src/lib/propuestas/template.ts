@@ -96,7 +96,7 @@ tr:nth-child(even) td{background:#0f0f0f}
   </div>
 
   <div class="cover-meta">
-    <span>Germán Ferulano · FERVOR · wolfdma.website</span>
+    <span>Germán Ferulano · FERVOR · fervorar.com</span>
     <span>v1</span>
   </div>
 </section>
@@ -157,7 +157,7 @@ tr:nth-child(even) td{background:#0f0f0f}
 
   <div class="card">
     <h3>3. Delivery (semanas 2-6)</h3>
-    <p>Producción + iteración. Update semanal por WhatsApp con avance. Acceso permanente a oficina.wolfdma.website para ver tu dashboard en tiempo real.</p>
+    <p>Producción + iteración. Update semanal por WhatsApp con avance. Acceso permanente a oficina.fervorar.com para ver tu dashboard en tiempo real.</p>
   </div>
 
   <div class="card">
@@ -174,12 +174,12 @@ tr:nth-child(even) td{background:#0f0f0f}
     Gracias por considerarme.
     <div class="name">Germán Ferulano</div>
     Fundador · FERVOR<br>
-    wolfdmagency@gmail.com · wolfdma.website
+    wolfdmagency@gmail.com · fervorar.com
   </div>
 
   <div class="foot">
     Germán Ferulano · FERVOR — Empresa unipersonal · Monotributo AFIP · Campana, Buenos Aires, Argentina<br>
-    Esta propuesta es confidencial. Compartirla públicamente sin autorización está sujeto a las Condiciones del servicio publicadas en wolfdma.website/terms.
+    Esta propuesta es confidencial. Compartirla públicamente sin autorización está sujeto a las Condiciones del servicio publicadas en fervorar.com/terms.
   </div>
 </section>
 </body>
