@@ -36,6 +36,8 @@ async function searchLeads(query: string) {
       ilike(schema.clients.nombre, q),
       ilike(schema.leads.telefono, q),
       ilike(schema.leads.email, q),
+      ilike(schema.leads.motivo, q),
+      ilike(schema.leads.notas, q),
     ))
     .orderBy(desc(schema.leads.createdAt))
     .limit(12);
