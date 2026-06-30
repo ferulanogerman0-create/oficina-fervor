@@ -1,4 +1,5 @@
 import { Sidebar } from '@/components/sidebar';
+import { MobileNav } from '@/components/mobile-nav';
 import { getObjetivosActivos, createHabito } from '@/lib/actions/habits';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
@@ -37,13 +38,14 @@ export default async function NuevoHabito() {
   return (
     <div className="min-h-screen flex bg-fervor-ink grid-bg">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto">
-        <header className="px-8 py-6 border-b border-fervor-border flex items-center gap-4">
+      <main className="flex-1 overflow-y-auto min-w-0">
+        <MobileNav />
+        <header className="px-4 md:px-8 py-4 md:py-6 border-b border-fervor-border flex items-center gap-4">
           <Link href="/habitos" className="text-fervor-smoke hover:text-fervor-flame"><ArrowLeft className="h-5 w-5" /></Link>
           <h1 className="font-display text-3xl font-bold text-fervor-paper">Nuevo hábito</h1>
         </header>
 
-        <form action={submit} className="p-8 max-w-2xl space-y-5">
+        <form action={submit} className="p-4 md:p-8 max-w-2xl space-y-5">
           <div className="grid grid-cols-[60px_1fr] gap-3">
             <label className="space-y-1.5">
               <div className="kicker">Emoji</div>

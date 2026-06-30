@@ -1,4 +1,5 @@
 import { Sidebar } from '@/components/sidebar';
+import { MobileNav } from '@/components/mobile-nav';
 import { redirect } from 'next/navigation';
 import { getHabitosHoy, getStreak, syncPendingToGcal } from '@/lib/actions/habits';
 import { db, schema } from '@/lib/db';
@@ -40,8 +41,9 @@ export default async function HabitosPage({ searchParams }: { searchParams: Prom
   return (
     <div className="min-h-screen flex bg-fervor-ink grid-bg">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto">
-        <header className="px-8 py-6 border-b border-fervor-border flex items-center justify-between">
+      <main className="flex-1 overflow-y-auto min-w-0">
+        <MobileNav />
+        <header className="px-4 md:px-8 py-4 md:py-6 border-b border-fervor-border flex items-center justify-between">
           <div>
             <div className="kicker mb-1">{dowLabel} · {fechaLabel}</div>
             <h1 className="font-display text-3xl font-bold text-fervor-paper">Hábitos del día</h1>
@@ -68,7 +70,7 @@ export default async function HabitosPage({ searchParams }: { searchParams: Prom
           </div>
         </header>
 
-        <div className="p-8 space-y-6">
+        <div className="p-4 md:p-8 space-y-6">
           {sp.gcal === 'ok' && (
             <div className="card border-fervor-flame bg-fervor-flame/5 text-fervor-flame text-sm">
               ✓ Google Calendar conectado{gcal[0]?.email ? ` (${gcal[0].email})` : ''}. Tocá <b>Sincronizar Calendar</b> para volcar tus hábitos.

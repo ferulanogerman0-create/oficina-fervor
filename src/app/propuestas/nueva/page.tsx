@@ -1,4 +1,5 @@
 import { Sidebar } from '@/components/sidebar';
+import { MobileNav } from '@/components/mobile-nav';
 import { SERVICIOS } from '@/lib/propuestas/catalog';
 import { createPropuesta } from '@/lib/actions/propuestas';
 import Link from 'next/link';
@@ -11,8 +12,9 @@ export default async function NuevaPropuestaPage({ searchParams }: { searchParam
   return (
     <div className="min-h-screen flex bg-fervor-ink grid-bg">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto">
-        <header className="px-8 py-6 border-b border-fervor-border flex items-center gap-4">
+      <main className="flex-1 overflow-y-auto min-w-0">
+        <MobileNav />
+        <header className="px-4 md:px-8 py-4 md:py-6 border-b border-fervor-border flex items-center gap-4">
           <Link href="/propuestas" className="text-fervor-smoke hover:text-fervor-flame"><ArrowLeft className="h-5 w-5" /></Link>
           <div>
             <div className="kicker mb-1">Comercial</div>
@@ -21,7 +23,7 @@ export default async function NuevaPropuestaPage({ searchParams }: { searchParam
           </div>
         </header>
 
-        <form action={createPropuesta} className="p-8 max-w-3xl space-y-6">
+        <form action={createPropuesta} className="p-4 md:p-8 max-w-3xl space-y-6">
           {/* Cliente */}
           <div className="card space-y-4">
             <div className="kicker">Cliente</div>

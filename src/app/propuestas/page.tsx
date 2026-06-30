@@ -1,4 +1,5 @@
 import { Sidebar } from '@/components/sidebar';
+import { MobileNav } from '@/components/mobile-nav';
 import { listPropuestas } from '@/lib/actions/propuestas';
 import Link from 'next/link';
 import { Plus, FileText, Check, X, Send, Clock } from 'lucide-react';
@@ -22,8 +23,9 @@ export default async function PropuestasPage() {
   return (
     <div className="min-h-screen flex bg-fervor-ink grid-bg">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto">
-        <header className="px-8 py-6 border-b border-fervor-border flex items-center justify-between">
+      <main className="flex-1 overflow-y-auto min-w-0">
+        <MobileNav />
+        <header className="px-4 md:px-8 py-4 md:py-6 border-b border-fervor-border flex items-center justify-between">
           <div>
             <div className="kicker mb-1">Comercial</div>
             <h1 className="font-display text-3xl font-bold text-fervor-paper">Propuestas</h1>
@@ -33,7 +35,7 @@ export default async function PropuestasPage() {
           </Link>
         </header>
 
-        <div className="p-8 space-y-4">
+        <div className="p-4 md:p-8 space-y-4">
           {rows.length === 0 ? (
             <div className="card text-center py-16">
               <FileText className="h-12 w-12 text-fervor-smoke mx-auto mb-3" />

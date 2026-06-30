@@ -1,4 +1,4 @@
-import { Sidebar } from '@/components/sidebar';
+import { PageShell } from '@/components/page-shell';
 import { TrendChart } from '@/components/trend-chart';
 import { dashboardKpis, dashboardTrend, dashboardClientes, dashboardTareas } from '@/lib/actions/dashboard';
 import { syncAllClientes } from '@/lib/actions/meta-accounts';
@@ -43,23 +43,19 @@ export default async function Home() {
   ];
 
   return (
-    <div className="min-h-screen flex bg-fervor-ink grid-bg">
-      <Sidebar />
-      <main className="flex-1 overflow-y-auto">
-        <header className="px-8 py-6 border-b border-fervor-border flex items-center justify-between">
-          <div>
-            <div className="kicker mb-1">Resumen general</div>
-            <h1 className="font-display text-3xl font-bold text-fervor-paper">Dashboard</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <form action={async () => { 'use server'; await syncAllClientes(); }}>
-              <button type="submit" className="btn-secondary text-sm flex items-center gap-2"><RefreshCw className="h-4 w-4" /> Sincronizar Meta</button>
-            </form>
-            <Link href="/clientes" className="btn-primary text-sm shadow-flame">+ Cliente</Link>
-          </div>
-        </header>
-
-        <div className="p-8 space-y-8">
+    <PageShell
+      kicker="Resumen general"
+      title="Dashboard"
+      actions={
+        <>
+          <form action={async () => { 'use server'; await syncAllClientes(); }}>
+            <button type="submit" className="btn-secondary text-sm flex items-center gap-2"><RefreshCw className="h-4 w-4" /> Sincronizar Meta</button>
+          </form>
+          <Link href="/clientes" className="btn-primary text-sm shadow-flame">+ Cliente</Link>
+        </>
+      }
+    >
+      <div className="space-y-6 md:space-y-8">
           {/* Atención comercial — sólo si hay algo */}
           {totalAtencion > 0 && (
             <section className="card border-fervor-flame/40 bg-fervor-flame/8 flex items-center gap-4 flex-wrap">
@@ -237,8 +233,7 @@ export default async function Home() {
           <footer className="text-center text-xs text-fervor-smoke/60 font-mono uppercase tracking-widest py-4">
             Oficina FERVOR · v0.1 · build {new Date().toISOString().slice(0, 10)}
           </footer>
-        </div>
-      </main>
-    </div>
+      </div>
+    </PageShell>
   );
 }
