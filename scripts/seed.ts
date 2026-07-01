@@ -38,6 +38,9 @@ async function main() {
       igHandle: '@fma_mecatronica', whatsapp: '+5493489681980', estado: 'activo', prioridad: 'alta' },
     { slug: 'victoria', nombre: 'Victoria Carbone', rubro: 'Psicología', color: '#A08880',
       igHandle: '@victoriacarbone.psi', whatsapp: '+5493489324935', estado: 'activo', prioridad: 'media' },
+    { slug: 'jasdeep', nombre: 'Jasdeep · AFA Capital', rubro: 'Asesoría financiera / CFO', color: '#1EA84F',
+      igHandle: '@jasdeep', whatsapp: '+5491127729013', estado: 'activo', prioridad: 'alta',
+      notes: 'Asesor financiero/CFO B2B+B2C. LinkedIn=empresas/fondos, IG=emprendedores/comercios. Producto: IA aplicada a finanzas + mentoría. Oferta gancho: diagnóstico gratis 30min.' },
   ];
   for (const c of seedClients) {
     const [exists] = await db.select().from(schema.clients).where(eq(schema.clients.slug, c.slug)).limit(1);
@@ -45,6 +48,49 @@ async function main() {
       await db.insert(schema.clients).values(c as typeof schema.clients.$inferInsert);
       console.log('✓ Cliente', c.slug, 'creado');
     } else console.log('· Cliente', c.slug, 'ya existe');
+  }
+
+  // ===== BAÚL DE CONTENIDO — Jasdeep (mes 1) =====
+  const [jd] = await db.select().from(schema.clients).where(eq(schema.clients.slug, 'jasdeep')).limit(1);
+  if (jd) {
+    const yaTiene = await db.select({ id: schema.contentIdeas.id }).from(schema.contentIdeas)
+      .where(eq(schema.contentIdeas.clientId, jd.id)).limit(1);
+    if (yaTiene.length === 0) {
+      const R = 'reel', C = 'carrusel', N = 'newsletter';
+      const IG = 'instagram', LI = 'linkedin';
+      const contenido: { titulo: string; formato: string; plataforma: string; hook: string; guion: string }[] = [
+        // ---- Semana 1 ----
+        { titulo: 'S1 · Reel LinkedIn — 70% no sabe si creció', formato: R, plataforma: LI, hook: 'El 70% de las empresas no sabe si su patrimonio creció el último año.', guion: 'Facturación ≠ valor. Un CFO mira si la empresa CREA patrimonio: rentabilidad real, capital de trabajo, deuda neta. CTA: diagnóstico 30 min.' },
+        { titulo: 'S1 · Reel IG — Facturás bien, ¿ganás?', formato: R, plataforma: IG, hook: 'Tu negocio factura bien… ¿pero estás ganando de verdad?', guion: 'Confundir "entra plata" con "gano plata". Separar finanzas + medir margen. 3 números: entra, sale, queda real. CTA: DM FINANZAS.' },
+        { titulo: 'S1 · Reel IG — 3 números por mes', formato: R, plataforma: IG, hook: '3 números que todo dueño debería mirar cada mes.', guion: '1) Margen 2) Caja (meses que aguantás) 3) Deuda (cuánto es tuyo). Si no los sabés, empezá hoy. CTA: DM FINANZAS.' },
+        { titulo: 'S1 · Reel IG — No te queda un peso', formato: R, plataforma: IG, hook: 'Facturás un montón y no te queda un peso. ¿Por qué?', guion: 'Precios mal, gastos que no ves, o deuda que come el margen. La plata se escapa por un agujero que no medís. CTA: DM FINANZAS.' },
+        { titulo: 'S1 · Carrusel — Patrimonio vs Caja', formato: C, plataforma: IG, hook: 'Tenés plata en la cuenta. ¿Eso significa que ganás?', guion: '5 slides: Caja=hoy / Patrimonio=si valés más / ejemplo entra 10 debés 12 = perdés / los 3 números / CTA diagnóstico.' },
+        // ---- Semana 2 ----
+        { titulo: 'S2 · Reel LinkedIn — Deuda que quiebra', formato: R, plataforma: LI, hook: 'Este error de deuda quiebra empresas rentables.', guion: 'Deuda corta para algo largo (máquina a 5 años con crédito a 12 meses). Se ahoga en el calce. Reestructurar el perfil. CTA: diagnóstico.' },
+        { titulo: 'S2 · Reel IG — El pozo de mezclar', formato: R, plataforma: IG, hook: 'El pozo que hunde a los emprendedores sin que lo vean.', guion: 'Mezclar plata personal y del negocio. Regla 1: cuenta separada. Regla 2: sueldo fijo. CTA: DM FINANZAS.' },
+        { titulo: 'S2 · Reel IG — Precio mal puesto', formato: R, plataforma: IG, hook: 'Ponés mal el precio y no lo sabés.', guion: '"Costo + un poco" te funde. Precio real = costo + TODOS los gastos + tu ganancia. CTA: DM FINANZAS.' },
+        { titulo: 'S2 · Reel IG — Colchón financiero', formato: R, plataforma: IG, hook: '¿Cuántos meses malos aguanta tu negocio?', guion: 'Colchón = 2-3 meses de gastos fijos guardados. Si no lo tenés, primera meta. CTA: DM FINANZAS.' },
+        { titulo: 'S2 · Carrusel — 5 errores financieros PyME', formato: C, plataforma: IG, hook: '5 errores que te cuestan plata (y ni los ves).', guion: '1 no medir · 2 mezclar finanzas · 3 deuda mal calzada · 4 mal pricing · 5 sin colchón. CTA diagnóstico.' },
+        { titulo: 'S2 · Newsletter — Crea o destruye valor', formato: N, plataforma: LI, hook: 'Cómo saber, en 15 minutos, si tu empresa crea o destruye valor.', guion: 'Mini-tablero de 3 números (rentabilidad, capital de trabajo, deuda neta). Cómo leerlos + 1 acción c/u. CTA diagnóstico.' },
+        // ---- Semana 3 ----
+        { titulo: 'S3 · Reel LinkedIn — Lo que ve un CFO', formato: R, plataforma: LI, hook: 'Lo que un CFO ve en tu balance y vos no.', guion: 'No mira la ganancia, mira su calidad: ¿caja o papel? ¿sostenible o a costa de deuda? CTA: diagnóstico.' },
+        { titulo: 'S3 · Reel IG — 3 preguntas', formato: R, plataforma: IG, hook: '3 preguntas que te hago apenas nos sentamos.', guion: '1) ¿Cuánto te queda real? 2) ¿Bancás 2 meses malos? 3) ¿Qué producto te deja plata? CTA: DM FINANZAS.' },
+        { titulo: 'S3 · Reel IG — De ahogado a respirar', formato: R, plataforma: IG, hook: 'De ahogado a respirar: una historia real (sin nombre).', guion: 'Comercio ganaba pero corría a cubrir cheques. No era ventas: deuda mal ordenada. Reordenamos vencimientos → 60 días. CTA.' },
+        { titulo: 'S3 · Reel IG — Qué producto te funde', formato: R, plataforma: IG, hook: '¿Qué producto te hace ganar y cuál te funde?', guion: 'No todos rinden igual. Medí ganancia POR producto: a veces vender menos de lo malo = ganar más. CTA: DM FINANZAS.' },
+        { titulo: 'S3 · Carrusel — El tablero financiero', formato: C, plataforma: IG, hook: 'El tablero de 1 hoja que te dice cómo va tu negocio.', guion: 'Indicadores: ventas, margen, caja disponible, deuda, punto de equilibrio. Qué mirar cada semana. CTA.' },
+        // ---- Semana 4 ----
+        { titulo: 'S4 · Reel LinkedIn — Mejor financiamiento', formato: R, plataforma: LI, hook: 'Cómo conseguir mejor financiamiento (lo que el banco no te explica).', guion: 'El banco presta por cómo se VE tu info. Balances ordenados + flujo proyectado + calce = mejor tasa y límite. CTA diagnóstico.' },
+        { titulo: 'S4 · Reel IG — Si no sabés si crecés', formato: R, plataforma: IG, hook: 'Si no sabés si crecés, tenés un problema. Y tiene solución.', guion: 'Sistema simple: medir 3 números, separar la plata, revisar 1×/semana. Eso solo te cambia el negocio. CTA: DM FINANZAS.' },
+        { titulo: 'S4 · Reel IG — Temporada y capital de trabajo', formato: R, plataforma: IG, hook: 'Vendés más en temporada y llegás justo igual. ¿Por qué?', guion: 'Sin planificar capital de trabajo, la plata de la buena época se va antes de la mala. Guardar antes. CTA: DM FINANZAS.' },
+        { titulo: 'S4 · Reel IG — Antes/Después', formato: R, plataforma: IG, hook: 'Antes / después de ordenar las finanzas (esto cambia todo).', guion: 'Antes: no sabés cuánto ganás, apagás incendios. Después: números, decisiones con datos, dormís tranquilo. CTA: DM FINANZAS.' },
+        { titulo: 'S4 · Carrusel — Antes / Después', formato: C, plataforma: IG, hook: 'Antes / Después (lo que cambia de verdad).', guion: '5 slides antes→después: saber cuánto ganás, decisiones, deuda, dormir tranquilo. CTA diagnóstico.' },
+        { titulo: 'S4 · Newsletter — Reestructurar deuda', formato: N, plataforma: LI, hook: 'Reestructurar deuda sin frenar el crecimiento.', guion: 'El problema del calce. 4 pasos: mapear vencimientos, agrupar/extender, negociar tasa, dejar aire de caja. Caso. CTA.' },
+      ];
+      await db.insert(schema.contentIdeas).values(
+        contenido.map((x) => ({ clientId: jd.id, titulo: x.titulo, formato: x.formato, plataforma: x.plataforma, hook: x.hook, guion: x.guion, estado: 'idea' })) as typeof schema.contentIdeas.$inferInsert[]
+      );
+      console.log('✓ Baúl de contenido Jasdeep sembrado:', contenido.length, 'ideas');
+    } else console.log('· Baúl Jasdeep ya tiene contenido');
   }
 
   // ===== OBJETIVOS estrategia 90d (2026-06-18 → 2026-09-16) =====
